@@ -14,16 +14,41 @@
             box-sizing: border-box;
         }
 
+        html {
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        /* Hide scrollbar for Chrome, Safari, and Opera */
+        html::-webkit-scrollbar {
+            display: none;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: #000;
             color: #fff;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            padding: 1rem;
+            box-sizing: border-box;
+            /* Hide scrollbar */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        /* Hide scrollbar for Chrome, Safari, and Opera */
+        body::-webkit-scrollbar {
+            display: none;
         }
 
         /* Animated background */
@@ -64,6 +89,21 @@
             z-index: 2;
             text-align: center;
             animation: fadeInUp 1.5s ease-out;
+            width: 100%;
+            max-width: 100%;
+            padding: 1rem;
+            box-sizing: border-box;
+            max-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            /* Hide scrollbar if content overflows */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        /* Hide scrollbar for Chrome, Safari, and Opera */
+        .welcome-container::-webkit-scrollbar {
+            display: none;
         }
 
         @keyframes fadeInUp {
@@ -79,12 +119,15 @@
 
         /* Logo animation */
         .logo-container {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            margin-top: 0;
             animation: logoFloat 3s ease-in-out infinite;
             position: relative;
             width: 200px;
             height: 200px;
-            margin: 0 auto;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
         }
 
         .logo-wrapper {
@@ -206,6 +249,7 @@
             color: #64c8ff;
             text-transform: uppercase;
             margin-bottom: 1rem;
+            margin-top: 0;
             text-shadow: 0 0 30px rgba(100, 200, 255, 0.5);
             animation: nameGlow 2s ease-in-out infinite;
         }
@@ -227,6 +271,9 @@
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         @keyframes textFadeIn {
@@ -295,6 +342,8 @@
         .sound-button {
             width: 52px;
             height: 52px;
+            min-width: 44px;
+            min-height: 44px;
             background: radial-gradient(circle at 30% 30%, rgba(100, 200, 255, 0.3), rgba(0, 0, 0, 0.9));
             border: 2px solid #64c8ff;
             border-radius: 50%;
@@ -312,6 +361,7 @@
             box-shadow:
                 0 0 0 1px rgba(0, 200, 255, 0.5),
                 0 0 18px rgba(0, 200, 255, 0.7);
+            touch-action: manipulation; /* Better touch handling */
         }
 
         .sound-button:hover {
@@ -369,16 +419,85 @@
             }
         }
 
-        /* Mobile responsive */
+        /* Responsive Design - Tablet and below */
+        @media (max-width: 1024px) {
+            .company-name {
+                font-size: 3.5rem;
+                letter-spacing: 0.25em;
+            }
+
+            .welcome-text {
+                font-size: 1.3rem;
+                padding: 0 2rem;
+            }
+
+            .logo-container {
+                width: 180px;
+                height: 180px;
+            }
+
+            .logo-container img {
+                width: 100px;
+                height: 100px;
+            }
+
+            /* Adjust orbiting stars for tablets */
+            @keyframes orbit1 {
+                from { transform: rotate(0deg) translateX(75px) rotate(0deg); }
+                to { transform: rotate(360deg) translateX(75px) rotate(-360deg); }
+            }
+            @keyframes orbit2 {
+                from { transform: rotate(60deg) translateX(75px) rotate(-60deg); }
+                to { transform: rotate(420deg) translateX(75px) rotate(-420deg); }
+            }
+            @keyframes orbit3 {
+                from { transform: rotate(120deg) translateX(75px) rotate(-120deg); }
+                to { transform: rotate(480deg) translateX(75px) rotate(-480deg); }
+            }
+            @keyframes orbit4 {
+                from { transform: rotate(180deg) translateX(75px) rotate(-180deg); }
+                to { transform: rotate(540deg) translateX(75px) rotate(-540deg); }
+            }
+            @keyframes orbit5 {
+                from { transform: rotate(240deg) translateX(75px) rotate(-240deg); }
+                to { transform: rotate(600deg) translateX(75px) rotate(-600deg); }
+            }
+            @keyframes orbit6 {
+                from { transform: rotate(300deg) translateX(75px) rotate(-300deg); }
+                to { transform: rotate(660deg) translateX(75px) rotate(-660deg); }
+            }
+        }
+
+        /* Mobile Landscape and Small Tablets */
         @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .welcome-container {
+                padding: 0.5rem;
+                max-height: calc(100vh - 1rem);
+            }
+
             .company-name {
                 font-size: 2.5rem;
                 letter-spacing: 0.2em;
+                margin-bottom: 0.75rem;
             }
 
             .welcome-text {
                 font-size: 1.1rem;
-                padding: 0 2rem;
+                padding: 0 1.5rem;
+                margin-bottom: 2rem;
+                line-height: 1.6;
+            }
+
+            .logo-container {
+                width: 150px;
+                height: 150px;
+                margin-bottom: 1.5rem;
             }
 
             .logo-container img {
@@ -389,6 +508,239 @@
             .enter-button {
                 padding: 1rem 2rem;
                 font-size: 0.9rem;
+                min-height: 44px; /* Better touch target */
+            }
+
+            .sound-button {
+                width: 48px;
+                height: 48px;
+                right: 20px;
+                bottom: 20px;
+            }
+
+            .sound-icon {
+                font-size: 20px;
+            }
+
+            /* Adjust orbiting stars for mobile */
+            @keyframes orbit1 {
+                from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+                to { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+            }
+            @keyframes orbit2 {
+                from { transform: rotate(60deg) translateX(60px) rotate(-60deg); }
+                to { transform: rotate(420deg) translateX(60px) rotate(-420deg); }
+            }
+            @keyframes orbit3 {
+                from { transform: rotate(120deg) translateX(60px) rotate(-120deg); }
+                to { transform: rotate(480deg) translateX(60px) rotate(-480deg); }
+            }
+            @keyframes orbit4 {
+                from { transform: rotate(180deg) translateX(60px) rotate(-180deg); }
+                to { transform: rotate(540deg) translateX(60px) rotate(-540deg); }
+            }
+            @keyframes orbit5 {
+                from { transform: rotate(240deg) translateX(60px) rotate(-240deg); }
+                to { transform: rotate(600deg) translateX(60px) rotate(-600deg); }
+            }
+            @keyframes orbit6 {
+                from { transform: rotate(300deg) translateX(60px) rotate(-300deg); }
+                to { transform: rotate(660deg) translateX(60px) rotate(-660deg); }
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .welcome-container {
+                padding: 0.25rem;
+                max-height: calc(100vh - 1rem);
+            }
+
+            .company-name {
+                font-size: 2rem;
+                letter-spacing: 0.15em;
+                margin-bottom: 0.5rem;
+            }
+
+            .welcome-text {
+                font-size: 0.95rem;
+                padding: 0 1rem;
+                margin-bottom: 1.5rem;
+                line-height: 1.5;
+            }
+
+            .logo-container {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 1rem;
+            }
+
+            .logo-container img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .enter-button {
+                padding: 0.9rem 1.5rem;
+                font-size: 0.85rem;
+                letter-spacing: 0.15em;
+                min-height: 44px;
+                width: 100%;
+                max-width: 280px;
+            }
+
+            .sound-button {
+                width: 44px;
+                height: 44px;
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .sound-icon {
+                font-size: 18px;
+            }
+
+            /* Adjust orbiting stars for small mobile */
+            @keyframes orbit1 {
+                from { transform: rotate(0deg) translateX(50px) rotate(0deg); }
+                to { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
+            }
+            @keyframes orbit2 {
+                from { transform: rotate(60deg) translateX(50px) rotate(-60deg); }
+                to { transform: rotate(420deg) translateX(50px) rotate(-420deg); }
+            }
+            @keyframes orbit3 {
+                from { transform: rotate(120deg) translateX(50px) rotate(-120deg); }
+                to { transform: rotate(480deg) translateX(50px) rotate(-480deg); }
+            }
+            @keyframes orbit4 {
+                from { transform: rotate(180deg) translateX(50px) rotate(-180deg); }
+                to { transform: rotate(540deg) translateX(50px) rotate(-540deg); }
+            }
+            @keyframes orbit5 {
+                from { transform: rotate(240deg) translateX(50px) rotate(-240deg); }
+                to { transform: rotate(600deg) translateX(50px) rotate(-600deg); }
+            }
+            @keyframes orbit6 {
+                from { transform: rotate(300deg) translateX(50px) rotate(-300deg); }
+                to { transform: rotate(660deg) translateX(50px) rotate(-660deg); }
+            }
+        }
+
+        /* Extra Small Mobile Devices */
+        @media (max-width: 360px) {
+            body {
+                padding: 0.25rem;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .welcome-container {
+                padding: 0.25rem;
+                max-height: calc(100vh - 0.5rem);
+            }
+
+            .company-name {
+                font-size: 1.75rem;
+                letter-spacing: 0.1em;
+                margin-bottom: 0.5rem;
+            }
+
+            .welcome-text {
+                font-size: 0.85rem;
+                padding: 0 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .logo-container {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 0.75rem;
+            }
+
+            .logo-container img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .enter-button {
+                padding: 0.8rem 1.2rem;
+                font-size: 0.8rem;
+                max-width: 240px;
+            }
+
+            .sound-button {
+                width: 40px;
+                height: 40px;
+                right: 12px;
+                bottom: 12px;
+            }
+
+            .sound-icon {
+                font-size: 16px;
+            }
+        }
+
+        /* Landscape Orientation on Mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                padding: 0.25rem;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .welcome-container {
+                padding: 0.25rem;
+                max-height: calc(100vh - 0.5rem);
+            }
+
+            .company-name {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .welcome-text {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .logo-container {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 0.75rem;
+            }
+
+            .logo-container img {
+                width: 70px;
+                height: 70px;
+            }
+
+            .enter-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Large Screens - Optimize for very wide displays */
+        @media (min-width: 1920px) {
+            .welcome-container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            .company-name {
+                font-size: 5rem;
+            }
+
+            .welcome-text {
+                font-size: 1.75rem;
+                max-width: 800px;
             }
         }
     </style>
@@ -427,10 +779,12 @@
     </button>
 
     <script>
-        // Create stars
+        // Create stars - optimized for device performance
         function createStars() {
             const starsContainer = document.getElementById('stars');
-            const starCount = 100;
+            // Reduce star count on mobile devices for better performance
+            const isMobile = window.innerWidth <= 768;
+            const starCount = isMobile ? 50 : 100;
 
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
@@ -442,10 +796,12 @@
             }
         }
 
-        // Create floating particles
+        // Create floating particles - optimized for device performance
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 30;
+            // Reduce particle count on mobile devices for better performance
+            const isMobile = window.innerWidth <= 768;
+            const particleCount = isMobile ? 15 : 30;
 
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
