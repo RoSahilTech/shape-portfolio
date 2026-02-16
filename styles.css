@@ -1498,6 +1498,7 @@ img {
         width: 100%;
         max-width: 100%;
         margin: 0 auto;
+        padding: 0 1rem;
         justify-items: center;
         box-sizing: border-box;
     }
@@ -1505,7 +1506,8 @@ img {
     .contact-info {
         gap: 2rem;
         width: 100%;
-        max-width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1884,6 +1886,7 @@ img {
         width: 100%;
         max-width: 100%;
         margin: 0 auto;
+        padding: 0 1rem;
         justify-items: center;
         box-sizing: border-box;
     }
@@ -1891,7 +1894,8 @@ img {
     .contact-info {
         gap: 2rem;
         width: 100%;
-        max-width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1979,7 +1983,8 @@ img {
 
     .contact-form-wrapper {
         width: 100%;
-        max-width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1995,6 +2000,7 @@ img {
         flex-direction: column;
         align-items: stretch;
         box-sizing: border-box;
+        margin: 0 auto;
     }
 
     .form-group {
