@@ -1,7 +1,7 @@
 // ============================================
 // API CONFIGURATION working
 // ============================================
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://shape-portfolio-api.onrender.com';
 
 // ============================================
 // 3D PARALLAX EFFECT FOR PROJECT CARDS
