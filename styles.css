@@ -1352,12 +1352,15 @@ img {
         min-height: auto;
         height: auto;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         padding-top: 100px;
+        display: flex;
+        flex-direction: column;
     }
 
     .hero-container {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         padding: 2rem 2rem 3rem;
         gap: 3rem;
         width: 100%;
@@ -1365,30 +1368,33 @@ img {
         box-sizing: border-box;
         text-align: center;
         align-items: center;
-        justify-items: center;
+        justify-content: center;
     }
 
     .hero-content {
-        order: 2;
+        order: 2 !important;
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
     }
 
     .hero-image {
-        order: 1;
+        order: 1 !important;
         margin-bottom: 2rem;
         margin-top: 0;
         width: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        position: relative;
     }
 
     .hero-image-wrapper {
         max-width: 350px;
         margin: 0 auto;
+        position: relative;
     }
 
     .projects {
@@ -1614,11 +1620,12 @@ img {
     }
 
     .hero-container {
+        display: flex;
+        flex-direction: column;
         padding: 2rem 1rem 3rem;
         gap: 2rem;
-        grid-template-columns: 1fr;
         align-items: center;
-        justify-items: center;
+        justify-content: center;
         text-align: center;
         width: 100%;
         max-width: 100%;
@@ -1626,20 +1633,22 @@ img {
 
     .hero-content {
         width: 100%;
-        order: 2;
+        order: 2 !important;
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
     }
 
     .hero-image {
         width: 100%;
-        order: 1;
+        order: 1 !important;
         margin-bottom: 1.5rem;
         margin-top: 0;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        position: relative;
     }
 
     .hero-name h1 {
@@ -1954,12 +1963,22 @@ img {
     }
 
     .hero-container {
+        display: flex !important;
+        flex-direction: column !important;
         padding: 1.5rem 0.75rem 2rem;
         gap: 1.5rem;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .hero-content {
+        order: 2 !important;
     }
 
     .hero-image {
+        order: 1 !important;
         margin-bottom: 1rem;
+        margin-top: 0;
     }
 
     .hero-image-wrapper {
