@@ -193,7 +193,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:5000';
+        const API_URL = 'https://shape-portfolio-api.onrender.com';
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
 
@@ -245,7 +245,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                errorMessage.textContent = error.message || 'Connection error. Please check if the server is running on http://localhost:5000';
+                errorMessage.textContent = error.message || 'Connection error. Please check if the server is running and try again.';
                 errorMessage.classList.add('show');
                 setTimeout(() => {
                     errorMessage.classList.remove('show');
