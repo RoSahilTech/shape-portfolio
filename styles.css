@@ -1473,6 +1473,10 @@ img {
         width: 100%;
         max-width: 100vw;
         box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }
 
     .contact-container {
@@ -1483,6 +1487,8 @@ img {
         justify-content: center;
         width: 100%;
         max-width: 100%;
+        box-sizing: border-box;
+        text-align: center;
     }
 
     .contact-content {
@@ -1493,6 +1499,7 @@ img {
         max-width: 100%;
         margin: 0 auto;
         justify-items: center;
+        box-sizing: border-box;
     }
 
     .contact-info {
@@ -1844,6 +1851,10 @@ img {
 
     .contact {
         padding: 3rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }
 
     .contact-container {
@@ -1855,12 +1866,15 @@ img {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        box-sizing: border-box;
+        text-align: center;
     }
 
     .contact-header {
         margin-bottom: 2rem;
         text-align: center;
         width: 100%;
+        max-width: 100%;
     }
 
     .contact-content {
@@ -1871,6 +1885,7 @@ img {
         max-width: 100%;
         margin: 0 auto;
         justify-items: center;
+        box-sizing: border-box;
     }
 
     .contact-info {
@@ -1969,6 +1984,7 @@ img {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        box-sizing: border-box;
     }
 
     .contact-form {
@@ -1978,6 +1994,26 @@ img {
         display: flex;
         flex-direction: column;
         align-items: stretch;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+    }
+
+    .form-group label {
+        text-align: left;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        text-align: left;
     }
 
     .form-group {
