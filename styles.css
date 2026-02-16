@@ -1372,17 +1372,18 @@ img {
     }
 
     .hero-content {
-        order: 2 !important;
+        order: 1 !important;
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         position: relative;
+        margin-bottom: 2rem;
     }
 
     .hero-image {
-        order: 1 !important;
-        margin-bottom: 2rem;
+        order: 2 !important;
+        margin-bottom: 0;
         margin-top: 0;
         width: 100%;
         display: flex;
@@ -1633,17 +1634,18 @@ img {
 
     .hero-content {
         width: 100%;
-        order: 2 !important;
+        order: 1 !important;
         display: flex;
         flex-direction: column;
         align-items: center;
         position: relative;
+        margin-bottom: 1.5rem;
     }
 
     .hero-image {
         width: 100%;
-        order: 1 !important;
-        margin-bottom: 1.5rem;
+        order: 2 !important;
+        margin-bottom: 0;
         margin-top: 0;
         display: flex;
         justify-content: center;
@@ -1972,12 +1974,13 @@ img {
     }
 
     .hero-content {
-        order: 2 !important;
+        order: 1 !important;
+        margin-bottom: 1rem;
     }
 
     .hero-image {
-        order: 1 !important;
-        margin-bottom: 1rem;
+        order: 2 !important;
+        margin-bottom: 0;
         margin-top: 0;
     }
 
