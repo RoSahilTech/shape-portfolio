@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SHAPE | Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Animated background */
+        .welcome-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(100, 200, 255, 0.1) 0%, rgba(0, 0, 0, 0.9) 70%);
+            z-index: 1;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #64c8ff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* Main content */
+        .welcome-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo animation */
+        .logo-container {
+            margin-bottom: 2rem;
+            animation: logoFloat 3s ease-in-out infinite;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            z-index: 3;
+            filter: drop-shadow(0 0 30px rgba(100, 200, 255, 0.6));
+        }
+
+        /* Orbiting stars around logo */
+        .orbiting-star {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #64c8ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.8);
+            z-index: 2;
+        }
+
+        .orbit-1 {
+            animation: orbit1 8s linear infinite;
+        }
+
+        .orbit-2 {
+            animation: orbit2 10s linear infinite;
+        }
+
+        .orbit-3 {
+            animation: orbit3 12s linear infinite;
+        }
+
+        .orbit-4 {
+            animation: orbit4 9s linear infinite;
+        }
+
+        .orbit-5 {
+            animation: orbit5 11s linear infinite;
+        }
+
+        .orbit-6 {
+            animation: orbit6 13s linear infinite;
+        }
+
+        @keyframes orbit1 {
+            from {
+                transform: rotate(0deg) translateX(90px) rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg) translateX(90px) rotate(-360deg);
+            }
+        }
+
+        @keyframes orbit2 {
+            from {
+                transform: rotate(60deg) translateX(90px) rotate(-60deg);
+            }
+            to {
+                transform: rotate(420deg) translateX(90px) rotate(-420deg);
+            }
+        }
+
+        @keyframes orbit3 {
+            from {
+                transform: rotate(120deg) translateX(90px) rotate(-120deg);
+            }
+            to {
+                transform: rotate(480deg) translateX(90px) rotate(-480deg);
+            }
+        }
+
+        @keyframes orbit4 {
+            from {
+                transform: rotate(180deg) translateX(90px) rotate(-180deg);
+            }
+            to {
+                transform: rotate(540deg) translateX(90px) rotate(-540deg);
+            }
+        }
+
+        @keyframes orbit5 {
+            from {
+                transform: rotate(240deg) translateX(90px) rotate(-240deg);
+            }
+            to {
+                transform: rotate(600deg) translateX(90px) rotate(-600deg);
+            }
+        }
+
+        @keyframes orbit6 {
+            from {
+                transform: rotate(300deg) translateX(90px) rotate(-300deg);
+            }
+            to {
+                transform: rotate(660deg) translateX(90px) rotate(-660deg);
+            }
+        }
+
+        /* Company name */
+        .company-name {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: 0.3em;
+            color: #64c8ff;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(100, 200, 255, 0.5);
+            animation: nameGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes nameGlow {
+            0%, 100% { text-shadow: 0 0 30px rgba(100, 200, 255, 0.5); }
+            50% { text-shadow: 0 0 50px rgba(100, 200, 255, 0.8), 0 0 80px rgba(100, 200, 255, 0.4); }
+        }
+
+        /* Welcome text */
+        .welcome-text {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: #b0b0b0;
+            margin-bottom: 3rem;
+            letter-spacing: 0.1em;
+            line-height: 1.8;
+            animation: textFadeIn 2s ease-out 0.5s both;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes textFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-text .highlight {
+            color: #64c8ff;
+            font-weight: 600;
+        }
+
+        /* Enter button */
+        .enter-button {
+            padding: 1.2rem 3rem;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: transparent;
+            color: #64c8ff;
+            border: 2px solid #64c8ff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            animation: buttonPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(100, 200, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(100, 200, 255, 0.6); }
+        }
+
+        .enter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 200, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .enter-button:hover {
+            background: rgba(100, 200, 255, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(100, 200, 255, 0.8);
+        }
+
+        .enter-button:hover::before {
+            left: 100%;
+        }
+
+        /* Sound toggle button */
+        .sound-button {
+            width: 52px;
+            height: 52px;
+            background: radial-gradient(circle at 30% 30%, rgba(100, 200, 255, 0.3), rgba(0, 0, 0, 0.9));
+            border: 2px solid #64c8ff;
+            border-radius: 50%;
+            color: #e6f7ff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: fixed;
+            right: 32px;
+            bottom: 32px;
+            overflow: hidden;
+            z-index: 5; /* float above background but below main content */
+            box-shadow:
+                0 0 0 1px rgba(0, 200, 255, 0.5),
+                0 0 18px rgba(0, 200, 255, 0.7);
+        }
+
+        .sound-button:hover {
+            background: rgba(100, 200, 255, 0.1);
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .sound-button.muted {
+            opacity: 0.7;
+            border-color: #888;
+            color: #bbbbbb;
+            box-shadow: 0 0 10px rgba(136, 136, 136, 0.4);
+        }
+
+        .sound-icon {
+            font-size: 24px;
+            line-height: 1;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8));
+        }
+
+        /* Particles effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #64c8ff;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: particleFloat 8s infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .company-name {
+                font-size: 2.5rem;
+                letter-spacing: 0.2em;
+            }
+
+            .welcome-text {
+                font-size: 1.1rem;
+                padding: 0 2rem;
+            }
+
+            .logo-container img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .enter-button {
+                padding: 1rem 2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Audio -->
+    <audio id="backgroundAudio" loop preload="auto">
+        <source src="sound/loginsound.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="welcome-background"></div>
+    <div class="stars" id="stars"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="welcome-container">
+        <div class="logo-container">
+            <div class="logo-wrapper">
+                <img src="image/shape_logo.png" alt="SHAPE Logo">
+                <!-- Orbiting stars will be added here by JavaScript -->
+            </div>
+        </div>
+        <h1 class="company-name">SHAPE</h1>
+        <p class="welcome-text">
+            Welcome to <span class="highlight">SHAPE</span><br>
+            Where we <span class="highlight">make</span> and <span class="highlight">serve</span> the world
+        </p>
+        <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <a href="portfolio.html" class="enter-button">Enter Portfolio</a>
+        </div>
+    </div>
+
+    <!-- Global sound toggle button (fixed bottom-right) -->
+    <button id="soundToggle" class="sound-button" title="Toggle Sound">
+        <span id="soundIcon" class="sound-icon" aria-hidden="true">🔊</span>
+    </button>
+
+    <script>
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Create orbiting stars around logo
+        function createOrbitingStars() {
+            const logoWrapper = document.querySelector('.logo-wrapper');
+            const starCount = 6; // Number of orbiting stars
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'orbiting-star';
+                star.classList.add(`orbit-${i + 1}`);
+                logoWrapper.appendChild(star);
+            }
+        }
+
+        // Audio control
+        let isPlaying = false;
+        let audio = null;
+        let soundToggle = null;
+        let soundIcon = null;
+
+        // Initialize audio when DOM is ready
+        function initAudio() {
+            audio = document.getElementById('backgroundAudio');
+            soundToggle = document.getElementById('soundToggle');
+            soundIcon = document.getElementById('soundIcon');
+
+            if (!audio) {
+                console.error('Audio element not found!');
+                return;
+            }
+
+            // Set audio properties
+            audio.volume = 0.6; // 60% volume
+            audio.loop = true;
+            
+            // Check if audio file loads
+            audio.addEventListener('loadeddata', () => {
+                console.log('Audio file loaded successfully');
+            });
+
+            audio.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                console.error('Audio error code:', audio.error ? audio.error.code : 'unknown');
+                console.error('Audio error message:', audio.error ? audio.error.message : 'unknown');
+                console.error('Audio file path:', audio.src);
+                console.error('Current audio src:', audio.currentSrc);
+                console.error('Audio readyState:', audio.readyState);
+                alert('Could not load audio file. Please check if sound/loginsound.mp3 exists in the sound folder.\n\nCheck browser console for details.');
+            });
+
+            audio.addEventListener('canplay', () => {
+                console.log('Audio can play - file loaded successfully');
+            });
+
+            audio.addEventListener('loadstart', () => {
+                console.log('Audio loading started');
+            });
+
+            // Handle audio events
+            audio.addEventListener('play', () => {
+                isPlaying = true;
+                if (soundToggle) soundToggle.classList.remove('muted');
+            });
+
+            audio.addEventListener('pause', () => {
+                isPlaying = false;
+                if (soundToggle) soundToggle.classList.add('muted');
+            });
+        }
+
+        // Toggle sound function
+        function toggleSound() {
+            if (!audio) {
+                console.error('Audio element not found');
+                initAudio();
+                if (!audio) {
+                    alert('Audio not available. Please refresh the page.');
+                    return;
+                }
+            }
+
+            if (isPlaying) {
+                // Pause sound
+                audio.pause();
+                console.log('Sound paused');
+                if (soundToggle) soundToggle.classList.add('muted');
+                if (soundIcon) soundIcon.textContent = '🔇';
+            } else {
+                // Play sound
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            console.log('Sound started successfully');
+                            if (soundToggle) soundToggle.classList.remove('muted');
+                            if (soundIcon) soundIcon.textContent = '🔊';
+                        })
+                        .catch(error => {
+                            console.error('Error playing sound:', error);
+                            alert('Could not play sound. Please check your browser audio settings.');
+                        });
+                }
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            createParticles();
+            createOrbitingStars();
+            
+            // Initialize audio
+            initAudio();
+            
+            // Set up sound toggle button
+            soundToggle = document.getElementById('soundToggle');
+            soundIcon = document.getElementById('soundIcon');
+            
+            if (soundToggle) {
+                soundToggle.addEventListener('click', toggleSound);
+                // Start with muted icon
+                soundToggle.classList.add('muted');
+                if (soundIcon) {
+                    soundIcon.textContent = '🔇';
+                }
+            }
+
+            // Try to auto-play (may be blocked by browser)
+            if (audio) {
+                // Wait for audio to be ready
+                const tryAutoPlay = () => {
+                    if (audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise
+                                .then(() => {
+                                    console.log('Auto-play successful');
+                                    isPlaying = true;
+                                    if (soundToggle) soundToggle.classList.remove('muted');
+                                    if (soundIcon) {
+                                        soundIcon.textContent = '🔊';
+                                    }
+                                })
+                                .catch(error => {
+                                    console.log('Auto-play blocked. Click the sound button to play.');
+                                    console.log('Error:', error.name, error.message);
+                                });
+                        }
+                    } else {
+                        // Wait a bit more and try again
+                        setTimeout(tryAutoPlay, 200);
+                    }
+                };
+
+                // Start trying after a short delay
+                setTimeout(tryAutoPlay, 300);
+            }
+        });
+    </script>
+</body>
+</html>

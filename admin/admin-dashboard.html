@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SHAPE Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .admin-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .admin-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #e0e0e0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .admin-header {
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .admin-header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-header-logo img {
+            height: 35px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .admin-header-logo span {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            color: #64c8ff;
+            text-transform: uppercase;
+        }
+
+        .admin-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #64c8ff;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1.5rem;
+            background: transparent;
+            color: #64c8ff;
+            border: 1px solid #64c8ff;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(100, 200, 255, 0.1);
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem 3rem;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: calc(100vh - 80px);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #64c8ff;
+        }
+
+        .messages-section,
+        .projects-section,
+        .skills-section {
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .skills-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        @media (min-width: 1400px) {
+            .skills-list {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .message-card,
+        .project-card {
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .message-card:hover,
+        .project-card:hover {
+            border-color: rgba(100, 200, 255, 0.4);
+            background: rgba(100, 200, 255, 0.08);
+        }
+
+        .btn-add-project {
+            padding: 0.75rem 1.5rem;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.5);
+            border-radius: 4px;
+            color: #64c8ff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-project:hover {
+            background: rgba(100, 200, 255, 0.2);
+            border-color: #64c8ff;
+            box-shadow: 0 0 15px rgba(100, 200, 255, 0.3);
+        }
+
+        .project-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .project-status.live {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.5);
+        }
+
+        .project-status.draft {
+            background: rgba(255, 200, 0, 0.2);
+            color: #ffc800;
+            border: 1px solid rgba(255, 200, 0, 0.5);
+        }
+
+        .projects-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        @media (min-width: 1400px) {
+            .projects-list {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
+        .project-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .project-card-title {
+            font-size: 1.2rem;
+            color: #64c8ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card-mission {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .project-card-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .project-stack-tag {
+            padding: 0.3rem 0.6rem;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #64c8ff;
+        }
+
+        .project-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-edit,
+        .btn-delete-project,
+        .btn-toggle-status {
+            flex: 1;
+            padding: 0.5rem;
+            background: transparent;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 4px;
+            color: #64c8ff;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
+        }
+
+        .btn-delete-project:hover {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .btn-toggle-status:hover {
+            background: rgba(100, 200, 255, 0.1);
+            border-color: #64c8ff;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .message-info h3 {
+            font-size: 1.1rem;
+            color: #64c8ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .message-info p {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .message-date {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .message-content {
+            margin-bottom: 1rem;
+        }
+
+        .message-content .subject {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-content .message-text {
+            font-size: 0.95rem;
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        .message-status {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(100, 200, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .status-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: default;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .status-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: default;
+            accent-color: #64c8ff;
+        }
+
+        .status-checkbox input[type="checkbox"]:checked + span {
+            color: #64c8ff;
+            font-weight: 500;
+        }
+
+        .replied-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(100, 200, 255, 0.2);
+            color: #64c8ff;
+            border: 1px solid #64c8ff;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .message-card.replied {
+            border-color: rgba(100, 200, 255, 0.4);
+            background: rgba(100, 200, 255, 0.08);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-reply {
+            padding: 0.5rem 1.5rem;
+            background: transparent;
+            color: #64c8ff;
+            border: 1px solid #64c8ff;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reply:hover {
+            background: rgba(100, 200, 255, 0.1);
+        }
+
+        .btn-delete {
+            padding: 0.5rem 1.5rem;
+            background: transparent;
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* Reply Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: #64c8ff;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #ffffff;
+        }
+
+        .reply-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: #64c8ff;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 0.75rem;
+            background: rgba(100, 200, 255, 0.05);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            border-radius: 4px;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #64c8ff;
+            background: rgba(100, 200, 255, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Status values layout */
+        .status-values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-value-item label {
+            font-size: 0.85rem;
+            text-transform: none;
+            letter-spacing: 0;
+            color: #c0e8ff;
+        }
+
+        .status-value-item input {
+            margin-top: 0.25rem;
+        }
+
+        /* PDF upload uses same dropzone styles as images */
+
+        @media (max-width: 768px) {
+            .status-values-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-upload-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .upload-dropzone {
+            border: 2px dashed rgba(100, 200, 255, 0.3);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(100, 200, 255, 0.02);
+        }
+
+        .upload-dropzone:hover,
+        .upload-dropzone.drag-over {
+            border-color: #64c8ff;
+            background: rgba(100, 200, 255, 0.1);
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.2);
+        }
+
+        .dropzone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64c8ff;
+        }
+
+        .dropzone-content svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropzone-content p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .dropzone-hint {
+            font-size: 0.85rem !important;
+            color: #888 !important;
+        }
+
+        .dropzone-note {
+            font-size: 0.75rem !important;
+            color: #666 !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .image-preview-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            background: rgba(100, 200, 255, 0.05);
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview-item .remove-image {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-preview-item .remove-image:hover {
+            background: rgba(255, 0, 0, 1);
+        }
+        
+        /* Disabled state for PDF upload when project has no report */
+        .upload-dropzone.disabled {
+            opacity: 0.35;
+            pointer-events: none;
+        }
+        
+        .pdf-input-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-send {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            color: #64c8ff;
+            border: 1px solid #64c8ff;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-send:hover {
+            background: rgba(100, 200, 255, 0.1);
+        }
+
+        .btn-cancel {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: #888;
+            border: 1px solid #888;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        @media (min-width: 1200px) {
+            .admin-container {
+                padding: 2rem 4rem;
+            }
+            
+            .admin-header {
+                padding: 1.5rem 4rem;
+            }
+            
+            .messages-section,
+            .projects-section,
+            .skills-section {
+                padding: 2.5rem 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 1rem;
+            }
+            
+            .admin-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .message-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .messages-section,
+            .projects-section,
+            .skills-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div class="admin-header-logo">
+            <img src="../image/shape_logo.png" alt="SHAPE Logo">
+            <span>SHAPE</span>
+        </div>
+        <h1>Admin Dashboard</h1>
+        <div class="admin-actions">
+            <span id="adminUsername" style="color: #888;"></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Messages</h3>
+                <div class="stat-value" id="totalMessages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Unread</h3>
+                <div class="stat-value" id="unreadMessages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Replied</h3>
+                <div class="stat-value" id="repliedMessages">0</div>
+            </div>
+        </div>
+
+        <div class="messages-section">
+            <div class="section-header">
+                <h2>Messages</h2>
+            </div>
+            <div class="messages-list" id="messagesList">
+                <!-- Messages will be loaded here -->
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <div class="section-header">
+                <h2>Projects</h2>
+                <button class="btn-add-project" onclick="openProjectModal()">+ Add Project</button>
+            </div>
+            <div class="projects-list" id="projectsList">
+                <!-- Projects will be loaded here -->
+            </div>
+        </div>
+
+        <div class="skills-section">
+            <div class="section-header">
+                <h2>Skills & Expertise</h2>
+                <button class="btn-add-project" onclick="openSkillModal()">+ Add Skill</button>
+            </div>
+            <div class="skills-list" id="skillsList">
+                <!-- Skills will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Skill Modal -->
+    <div class="modal" id="skillModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 id="skillModalTitle">Add New Skill</h2>
+                <button class="close-modal" onclick="closeSkillModal()">&times;</button>
+            </div>
+            <form class="project-form" id="skillForm">
+                <input type="hidden" id="skillId">
+                
+                <div class="form-group">
+                    <label>Skill Name *</label>
+                    <input type="text" id="skillName" required placeholder="e.g., Electronics Design">
+                </div>
+                
+                <div class="form-group">
+                    <label>Percentage (0-100) *</label>
+                    <input type="number" id="skillPercentage" min="0" max="100" required placeholder="e.g., 90">
+                    <small style="color: #888; font-size: 0.85rem; margin-top: 0.25rem; display: block;">Enter your proficiency level (0-100%)</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-send">Save Skill</button>
+                    <button type="button" class="btn-cancel" onclick="closeSkillModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 id="projectModalTitle">Add New Project</h2>
+                <button class="close-modal" onclick="closeProjectModal()">&times;</button>
+            </div>
+            <form class="project-form" id="projectForm">
+                <input type="hidden" id="projectId">
+                
+                <div class="form-group">
+                    <label>Project Name *</label>
+                    <input type="text" id="projectName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Mission Description (One Line) *</label>
+                    <input type="text" id="projectMission" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Mission Brief (Full Description) *</label>
+                    <textarea id="projectMissionBrief" rows="5" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>System Architecture (ASCII Diagram)</label>
+                    <textarea id="projectArchitecture" rows="8" placeholder="Enter ASCII diagram..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Engineering Stack (comma-separated) *</label>
+                    <input type="text" id="projectStack" placeholder="Arduino, ESP32, RF, Sensors" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Project Images</label>
+                    <div class="image-upload-area" id="imageUploadArea">
+                        <div class="upload-dropzone" id="imageDropzone">
+                            <div class="dropzone-content">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p>Drag and drop images here</p>
+                                <p class="dropzone-hint">or click to browse</p>
+                                <p class="dropzone-note">Drop files to auto-detect paths, or paste paths in textarea</p>
+                            </div>
+                            <input type="file" id="imageFileInput" multiple accept="image/*" style="display: none;">
+                        </div>
+                        <textarea id="projectImages" rows="4" placeholder="Paste image paths here (one per line, max 20 images):&#10;D:\porfolio\image\project\por1\ima5.jpg&#10;D:\porfolio\image\project\por1\ima6.jpg&#10;image/project2.jpg&#10;&#10;You can use:&#10;- Full paths: D:\porfolio\image\project\por1\ima5.jpg&#10;- Relative paths: image/project/por1/ima5.jpg"></textarea>
+                        <small style="color: #888; font-size: 0.85rem; margin-top: 0.25rem; display: block;">Maximum 20 images per project</small>
+                        <div class="image-preview-list" id="imagePreviewList"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>LinkedIn Post Link (Optional)</label>
+                    <input type="url" id="projectLinkedIn" placeholder="https://www.linkedin.com/posts/...">
+                    <small style="color: #888; font-size: 0.85rem; margin-top: 0.25rem; display: block;">Add a link to your LinkedIn post about this project</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Project Report (PDF) (Optional)</label>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #c0e8ff;">
+                            <input type="checkbox" id="projectHasReport" style="width: 14px; height: 14px;">
+                            <span> this project has a report PDF</span>
+                        </label>
+                    </div>
+                    <div class="image-upload-area" id="pdfUploadArea">
+                        <div class="upload-dropzone" id="pdfDropzone">
+                            <div class="dropzone-content">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+                                    <path d="M14 2v5h5"/>
+                                    <path d="M8 13h8"/>
+                                    <path d="M8 17h5"/>
+                                </svg>
+                                <p>Drag and drop PDF here</p>
+                                <p class="dropzone-hint">or click to browse</p>
+                                <p class="dropzone-note" id="pdfDropzoneNote">Path will be set automatically (e.g. docs/my-report.pdf)</p>
+                            </div>
+                            <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;">
+                        </div>
+                        <input type="text" id="projectReport" placeholder="docs/my-project-report.pdf" style="margin-top: 0.75rem;">
+                        <small style="color: #888; font-size: 0.85rem; margin-top: 0.25rem; display: block;">
+                            You can also paste a full URL if the report is hosted online.
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status Values</label>
+                    <div class="status-values-grid">
+                        <div class="status-value-item">
+                            <label>Stability (0-100)</label>
+                            <input type="number" id="projectStability" min="0" max="100" value="0">
+                        </div>
+                        <div class="status-value-item">
+                            <label>Range (0-100)</label>
+                            <input type="number" id="projectRange" min="0" max="100" value="0">
+                        </div>
+                        <div class="status-value-item">
+                            <label>Reliability (0-100)</label>
+                            <input type="number" id="projectReliability" min="0" max="100" value="0">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status *</label>
+                    <select id="projectStatus" required>
+                        <option value="draft">Draft</option>
+                        <option value="live">Live</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-send">Save Project</button>
+                    <button type="button" class="btn-cancel" onclick="closeProjectModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div class="modal" id="replyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reply to Message</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form class="reply-form" id="replyForm">
+                <div class="form-group">
+                    <label>To:</label>
+                    <input type="email" id="replyTo" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Subject:</label>
+                    <input type="text" id="replySubject" required>
+                </div>
+                <div class="form-group">
+                    <label>Message:</label>
+                    <textarea id="replyMessage" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-send">Send Email</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>

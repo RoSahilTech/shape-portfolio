@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Electronics Design",
+    "percentage": 90
+  },
+  {
+    "id": 2,
+    "name": "Robotics & Automation",
+    "percentage": 85
+  },
+  {
+    "id": 3,
+    "name": "Embedded Systems",
+    "percentage": 88
+  },
+  {
+    "id": 4,
+    "name": "Microcontroller Programming",
+    "percentage": 87
+  },
+  {
+    "id": 5,
+    "name": "Circuit Design",
+    "percentage": 70
+  },
+  {
+    "id": 6,
+    "name": "RC Plane",
+    "percentage": 45
+  }
+]

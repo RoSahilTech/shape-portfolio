@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Archives | SHAPE - Sahil Kumar Sharma</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="projects-styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="projects-nav">
+        <div class="nav-logo">
+            <img src="image/shape_logo.png" alt="SHAPE Logo">
+            <span>SHAPE</span>
+        </div>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinks">
+            <!-- When on the projects page, go back to the main portfolio sections -->
+            <li><a href="portfolio.html#home">Home</a></li>
+            <li><a href="projects.html" class="active">Projects</a></li>
+            <li><a href="portfolio.html#about">About</a></li>
+            <li><a href="portfolio.html#contact">Contact</a></li>
+            <li><a href="resume.html" class="nav-resume-btn">Resume</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="projects-hero">
+        <div class="hero-background">
+            <video autoplay muted loop playsinline class="hero-video">
+                <source src="image/video1.mp4" type="video/mp4">
+                <source src="image/video1.webm" type="video/webm">
+            </video>
+            <div class="video-overlay"></div>
+            <div class="grid-overlay"></div>
+            <div class="stars-overlay"></div>
+            <div class="scan-lines"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-hud">
+                <div class="hud-line"></div>
+                <h1 class="hero-title">PROJECT ARCHIVES</h1>
+                <div class="hud-line"></div>
+            </div>
+            <p class="hero-subtitle">Engineering Reality From Ideas</p>
+            <div class="hero-telemetry">
+                <span class="telemetry-item">STATUS: <span class="glow-text">ACTIVE</span></span>
+                <span class="telemetry-item">PROJECTS: <span class="glow-text" id="projectCount">0</span></span>
+                <span class="telemetry-item">SYSTEMS: <span class="glow-text">ONLINE</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Showcase Section -->
+    <section class="projects-showcase">
+        <div class="showcase-background">
+            <video autoplay muted loop playsinline class="showcase-video">
+                <source src="image/video2.mp4" type="video/mp4">
+                <source src="image/video2.webm" type="video/webm">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        <div class="container">
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Project cards will be dynamically generated or manually added -->
+                <div class="project-card" data-project="1">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <span>PROJECT IMAGE</span>
+                        </div>
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="project-name">Autonomous Drone System</h3>
+                        <p class="project-mission">Advanced navigation with obstacle avoidance and AI-powered flight control</p>
+                        <div class="tech-stack">
+                            <span class="tech-icon" title="Arduino">AR</span>
+                            <span class="tech-icon" title="ESP32">ESP</span>
+                            <span class="tech-icon" title="RF">RF</span>
+                            <span class="tech-icon" title="Sensors">SEN</span>
+                            <span class="tech-icon" title="AI">AI</span>
+                            <span class="tech-icon" title="IoT">IoT</span>
+                        </div>
+                        <button class="view-mission-btn">View Mission</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="2">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <span>PROJECT IMAGE</span>
+                        </div>
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="project-name">Smart Home Automation</h3>
+                        <p class="project-mission">IoT-based home automation with MQTT protocol and sensor integration</p>
+                        <div class="tech-stack">
+                            <span class="tech-icon" title="ESP32">ESP</span>
+                            <span class="tech-icon" title="MQTT">MQ</span>
+                            <span class="tech-icon" title="Sensors">SEN</span>
+                            <span class="tech-icon" title="IoT">IoT</span>
+                            <span class="tech-icon" title="Node.js">NJS</span>
+                        </div>
+                        <button class="view-mission-btn">View Mission</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="3">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <span>PROJECT IMAGE</span>
+                        </div>
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="project-name">6-DOF Robotic Arm</h3>
+                        <p class="project-mission">Precision-controlled robotic arm with servo motors and 3D printed components</p>
+                        <div class="tech-stack">
+                            <span class="tech-icon" title="Arduino">AR</span>
+                            <span class="tech-icon" title="C++">C++</span>
+                            <span class="tech-icon" title="Servo">SRV</span>
+                            <span class="tech-icon" title="3D Print">3DP</span>
+                        </div>
+                        <button class="view-mission-btn">View Mission</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="4">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <span>PROJECT IMAGE</span>
+                        </div>
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="project-name">Satellite Communication System</h3>
+                        <p class="project-mission">Ground station with RF modules for satellite data transmission</p>
+                        <div class="tech-stack">
+                            <span class="tech-icon" title="RF">RF</span>
+                            <span class="tech-icon" title="Arduino">AR</span>
+                            <span class="tech-icon" title="Antenna">ANT</span>
+                            <span class="tech-icon" title="Telemetry">TEL</span>
+                        </div>
+                        <button class="view-mission-btn">View Mission</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="5">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <span>PROJECT IMAGE</span>
+                        </div>
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="project-name">Embedded Control System</h3>
+                        <p class="project-mission">Real-time embedded system for industrial automation and monitoring</p>
+                        <div class="tech-stack">
+                            <span class="tech-icon" title="Embedded">EMB</span>
+                            <span class="tech-icon" title="RTOS">RT</span>
+                            <span class="tech-icon" title="Sensors">SEN</span>
+                            <span class="tech-icon" title="Control">CTL</span>
+                        </div>
+                        <button class="view-mission-btn">View Mission</button>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="6">
+                    <div class="card-image">
+                        <div class="image-placeholder">
+                            <span>PROJECT IMAGE</span>
+                        </div>
+                        <div class="card-overlay"></div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="project-name">Circuit Design & PCB</h3>
+                        <p class="project-mission">Custom PCB design for high-frequency electronics and power management</p>
+                        <div class="tech-stack">
+                            <span class="tech-icon" title="PCB">PCB</span>
+                            <span class="tech-icon" title="Circuit">CIR</span>
+                            <span class="tech-icon" title="Power">PWR</span>
+                            <span class="tech-icon" title="RF">RF</span>
+                        </div>
+                        <button class="view-mission-btn">View Mission</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Individual Project Detail Section -->
+    <section class="project-detail" id="projectDetail" style="display: none;">
+        <div class="container">
+            <button class="close-detail-btn" id="closeDetail">×</button>
+            <div class="detail-content">
+                <div class="mission-brief">
+                    <h2 class="section-title">MISSION BRIEF</h2>
+                    <p class="brief-text" id="missionBrief">
+                        <!-- Mission brief will be populated dynamically -->
+                    </p>
+                </div>
+
+                <div class="project-gallery" id="projectGallery" style="display: none;">
+                    <h2 class="section-title">PROJECT GALLERY <span id="imageCount" style="font-size: 0.6em; color: #888; font-weight: 400;">(0 images)</span></h2>
+                    <div class="gallery-container">
+                        <div class="gallery-main">
+                            <img id="galleryMainImage" src="" alt="Project Image">
+                            <button class="gallery-nav-btn gallery-prev" id="galleryPrev">‹</button>
+                            <button class="gallery-nav-btn gallery-next" id="galleryNext">›</button>
+                        </div>
+                        <div class="gallery-thumbnails" id="galleryThumbnails">
+                            <!-- Thumbnails will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="system-architecture">
+                    <h2 class="section-title">SYSTEM ARCHITECTURE</h2>
+                    <div class="architecture-diagram" id="architectureDiagram">
+                        <!-- Architecture diagram will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="engineering-stack">
+                    <h2 class="section-title">ENGINEERING STACK</h2>
+                    <div class="stack-tags" id="stackTags">
+                        <!-- Stack tags will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="mission-status">
+                    <h2 class="section-title">MISSION STATUS</h2>
+                    <div class="status-hud">
+                        <div class="hud-bar">
+                            <div class="hud-label">
+                                <span>STABILITY</span>
+                                <span class="hud-value" id="stabilityValue">0%</span>
+                            </div>
+                            <div class="hud-progress">
+                                <div class="hud-fill" id="stabilityBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="hud-bar">
+                            <div class="hud-label">
+                                <span>RANGE</span>
+                                <span class="hud-value" id="rangeValue">0%</span>
+                            </div>
+                            <div class="hud-progress">
+                                <div class="hud-fill" id="rangeBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="hud-bar">
+                            <div class="hud-label">
+                                <span>RELIABILITY</span>
+                                <span class="hud-value" id="reliabilityValue">0%</span>
+                            </div>
+                            <div class="hud-progress">
+                                <div class="hud-fill" id="reliabilityBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="linkedin-link" id="linkedInLinkSection" style="display: none;">
+                    <h2 class="section-title">LINKEDIN POST</h2>
+                    <a href="#" id="linkedInLink" target="_blank" rel="noopener noreferrer" class="linkedin-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        View on LinkedIn
+                    </a>
+                </div>
+
+                <div class="linkedin-link" id="projectReportSection" style="display: none; margin-top: 2rem;">
+                    <h2 class="section-title">PROJECT REPORT</h2>
+                    <div class="project-report-viewer">
+                        <div id="projectReportEmbedContainer">
+                            <!-- PDF will be embedded here -->
+                        </div>
+                        <a href="#" id="projectReportLink" target="_blank" rel="noopener noreferrer" class="linkedin-btn" style="margin-top: 1rem;">
+                            Open in New Tab (Fallback)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="projects-footer">
+        <div class="footer-content">
+            <p>TRANSMISSION END — SHAPE ENGINEERING</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="projects-script.js"></script>
+</body>
+</html>
