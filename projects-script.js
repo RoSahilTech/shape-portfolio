@@ -739,11 +739,23 @@ async function displayProjectGallery(images) {
     gallerySection.style.display = 'block';
     currentImageIndex = 0;
     
+    // Store original images before validation
+    const originalProjectImages = [...projectImages];
+    
     // Pre-validate images - filter out ones that don't exist
+    // But don't be too strict - if validation is slow, assume images are valid
     await validateAndFilterImages();
     
+    // If all images were filtered out, but we had images originally,
+    // it might be a validation issue (slow network) - show them anyway
+    if (projectImages.length === 0 && originalProjectImages.length > 0) {
+        console.warn('No valid images found after validation, but showing anyway (might be slow network or images not yet deployed)');
+        // Restore original images - let browser handle loading
+        projectImages = originalProjectImages;
+    }
+    
     if (projectImages.length === 0) {
-        console.warn('No valid images found after validation');
+        console.warn('No images to display');
         gallerySection.style.display = 'none';
         return;
     }
@@ -761,13 +773,14 @@ async function displayProjectGallery(images) {
                 const img = new Image();
                 let resolved = false;
                 
-                // Set a timeout to avoid hanging
+                // Increase timeout to 10 seconds for slow networks/Netlify CDN
                 const timeout = setTimeout(() => {
                     if (!resolved) {
                         resolved = true;
+                        console.warn(`Image validation timeout: ${imagePath}`);
                         resolve({ path: imagePath, valid: false });
                     }
-                }, 5000);
+                }, 10000); // Increased from 5000 to 10000
                 
                 img.onload = () => {
                     if (!resolved) {
@@ -778,10 +791,11 @@ async function displayProjectGallery(images) {
                 };
                 
                 img.onerror = () => {
-                    // Silently handle missing images - no console warnings
+                    // Log which images failed for debugging
                     if (!resolved) {
                         resolved = true;
                         clearTimeout(timeout);
+                        console.warn(`Image failed to load: ${imagePath}`);
                         resolve({ path: imagePath, valid: false });
                     }
                 };
@@ -794,15 +808,15 @@ async function displayProjectGallery(images) {
         const validCount = results.filter(r => r.valid).length;
         const invalidCount = results.filter(r => !r.valid).length;
         
-        projectImages = results.filter(r => r.valid).map(r => r.path);
-        
-        // Only show summary if there were invalid images (quiet mode)
+        // Log detailed results for debugging
         if (invalidCount > 0) {
-            // Only log if more than 1 invalid image to reduce noise
-            if (invalidCount > 1) {
-                console.log(`Gallery: ${validCount} image(s) loaded, ${invalidCount} image(s) skipped (not found).`);
-            }
+            const invalidPaths = results.filter(r => !r.valid).map(r => r.path);
+            console.warn(`Gallery validation: ${validCount} valid, ${invalidCount} invalid`);
+            console.warn('Invalid image paths:', invalidPaths);
+            console.warn('Tip: Check if images are deployed to Netlify. Test URLs directly in browser.');
         }
+        
+        projectImages = results.filter(r => r.valid).map(r => r.path);
     }
     
     // Set main image with error handling
