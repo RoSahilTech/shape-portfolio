@@ -363,6 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Send to Flask backend API
             const API_URL = 'https://shape-portfolio-api.onrender.com';
             
+            console.log('Submitting contact form to:', `${API_URL}/api/contact`);
+            console.log('Form data:', formData);
+            
             fetch(`${API_URL}/api/contact`, {
                 method: 'POST',
                 headers: {
@@ -371,14 +374,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(formData)
             })
             .then(response => {
+                console.log('Contact form response status:', response.status);
                 if (!response.ok) {
                     return response.json().then(data => {
+                        console.error('Contact form error response:', data);
                         throw new Error(data.error || `Server error: ${response.status}`);
                     });
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Contact form success response:', data);
                 if (data.success) {
                     alert('Thank you for your message! I will get back to you soon.');
                     contactForm.reset();

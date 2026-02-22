@@ -51,32 +51,54 @@ let currentProjectId = null;
 
 // Load messages from Flask API
 function loadMessages() {
+    const messagesList = document.getElementById('messagesList');
+    if (!messagesList) {
+        console.error('Messages list element not found');
+        return;
+    }
+    
+    const headers = getAuthHeaders();
+    console.log('Loading messages from:', `${API_URL}/api/messages`);
+    console.log('Auth headers:', headers);
+    
     fetch(`${API_URL}/api/messages`, {
         method: 'GET',
-        headers: getAuthHeaders()
+        headers: headers
     })
     .then(response => {
+        console.log('Response status:', response.status);
         if (response.status === 401) {
             // Unauthorized - redirect to login
+            console.error('Unauthorized - redirecting to login');
             sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('adminToken');
             window.location.href = 'admin-login.html';
-            return;
+            return Promise.reject(new Error('Unauthorized'));
+        }
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            });
         }
         return response.json();
     })
     .then(data => {
+        console.log('Messages response:', data);
         if (data && data.success) {
-            messages = data.messages;
+            messages = data.messages || [];
+            console.log('Loaded messages:', messages.length);
             updateStats(messages);
             displayMessages(messages);
         } else {
-            console.error('Error loading messages:', data);
-            messagesList.innerHTML = '<div class="empty-state"><p>Error loading messages</p></div>';
+            console.error('Error loading messages - invalid response:', data);
+            messagesList.innerHTML = '<div class="empty-state"><p>Error loading messages: ' + (data?.error || 'Invalid response') + '</p></div>';
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        messagesList.innerHTML = '<div class="empty-state"><p>Connection error. Please check if the server is running.</p></div>';
+        console.error('Error loading messages:', error);
+        if (messagesList) {
+            messagesList.innerHTML = '<div class="empty-state"><p>Connection error: ' + error.message + '<br>Please check if the server is running and you are logged in.</p></div>';
+        }
     });
 }
 
@@ -1104,8 +1126,27 @@ function initPdfDragAndDrop() {
     }
 }
 
+// Test API connection on page load
+function testAPIConnection() {
+    console.log('Testing API connection...');
+    fetch(`${API_URL}/api/health`, {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('API health check:', data);
+    })
+    .catch(error => {
+        console.error('API connection test failed:', error);
+    });
+}
+
 // Load messages on page load
-loadMessages();
+// Wait a bit to ensure DOM is ready
+setTimeout(() => {
+    testAPIConnection();
+    loadMessages();
+}, 100);
 
 // ============================================
 // SKILLS MANAGEMENT
