@@ -285,7 +285,7 @@ function initProjects3D() {
 
 // Load skills from API
 function loadSkills() {
-    const API_URL = 'http://localhost:5000';
+    const API_URL = 'https://shape-portfolio-api.onrender.com';
     const skillsGrid = document.getElementById('skillsGrid');
     
     if (!skillsGrid) return;
@@ -357,14 +357,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                date: new Date().toISOString(),
-                read: false,
-                replied: false
+                message: document.getElementById('message').value
             };
 
             // Send to Flask backend API
-            const API_URL = 'http://localhost:5000';
+            const API_URL = 'https://shape-portfolio-api.onrender.com';
             
             fetch(`${API_URL}/api/contact`, {
                 method: 'POST',
@@ -373,23 +370,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify(formData)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || `Server error: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     alert('Thank you for your message! I will get back to you soon.');
                     contactForm.reset();
                 } else {
-                    alert('There was an error sending your message. Please try again.');
+                    alert('There was an error sending your message: ' + (data.error || 'Unknown error'));
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                // Fallback to localStorage if API is not available
-                let messages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
-                messages.push(formData);
-                localStorage.setItem('contactMessages', JSON.stringify(messages));
-                alert('Thank you for your message! I will get back to you soon.');
-                contactForm.reset();
+                console.error('Error sending message:', error);
+                alert('Unable to send message. Please check your connection and try again.\n\nError: ' + error.message);
+                // Don't use localStorage fallback as it won't sync with the backend
             });
         });
     }
