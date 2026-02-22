@@ -203,22 +203,37 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
     
     console.log('Sending reply email:', replyData);
     console.log('API URL:', `${API_URL}/api/send-email`);
+    console.log('Auth headers:', getAuthHeaders());
+    
+    // Add timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
     
     // Send email via Flask API
     fetch(`${API_URL}/api/send-email`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify(replyData)
+        body: JSON.stringify(replyData),
+        signal: controller.signal
     })
     .then(response => {
+        clearTimeout(timeoutId);
         console.log('Send email response status:', response.status);
+        console.log('Send email response headers:', response.headers);
+        
         if (!response.ok) {
             return response.json().then(data => {
                 console.error('Send email error response:', data);
                 throw new Error(data.error || `Server error: ${response.status}`);
+            }).catch(err => {
+                // If JSON parsing fails, still throw with status
+                throw new Error(`Server error: ${response.status} - ${err.message}`);
             });
         }
-        return response.json();
+        return response.json().catch(err => {
+            console.error('Failed to parse JSON response:', err);
+            throw new Error('Invalid response from server');
+        });
     })
     .then(data => {
         console.log('Send email success response:', data);
@@ -259,8 +274,22 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
+        clearTimeout(timeoutId);
         console.error('Error sending email:', error);
-        alert('Error sending email: ' + error.message + '\n\nPlease check:\n1. Gmail credentials are configured in backend\n2. Gmail App Password is set correctly\n3. Backend server is running');
+        console.error('Error type:', error.name);
+        console.error('Error message:', error.message);
+        
+        let errorMessage = 'Error sending email: ' + error.message;
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Request timed out. The server may be taking too long to send the email. Please check:\n1. Gmail credentials are configured\n2. Backend server is running\n3. Try again in a moment';
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network error: Could not connect to server. Please check:\n1. Backend server is running\n2. Internet connection is stable';
+        } else if (error.message.includes('Gmail credentials')) {
+            errorMessage = error.message;
+        }
+        
+        alert(errorMessage);
     });
 });
 

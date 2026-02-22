@@ -15,22 +15,23 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-change-this-in-production')
 
-# Configure CORS - Allow localhost/127.0.0.1 with any port
-# When using credentials, we need to specify origins instead of wildcard
-import re
-
-# Manual CORS handler - more reliable than flask-cors function
+# Configure CORS - Allow all origins for production
+# This allows requests from any origin (you can restrict this to specific domains for security)
 @app.after_request
-def after_request(response):
+def after_request_cors(response):
     origin = request.headers.get('Origin')
     if origin:
-        # Check if origin is localhost or 127.0.0.1 with any port
-        if re.match(r'^https?://(localhost|127\.0\.0\.1)(:\d+)?/?$', origin):
-            response.headers['Access-Control-Allow-Origin'] = origin
-            response.headers['Access-Control-Allow-Credentials'] = 'true'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, Accept, X-Auth-Token'
-            response.headers['Access-Control-Expose-Headers'] = 'Content-Type'
+        # Allow requests from any origin (for production)
+        # You can restrict this to specific domains for better security
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+    else:
+        # Fallback: allow all origins if no Origin header
+        response.headers['Access-Control-Allow-Origin'] = '*'
+    
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, Accept, X-Auth-Token'
+    response.headers['Access-Control-Expose-Headers'] = 'Content-Type'
     return response
 
 # Handle preflight OPTIONS requests
@@ -38,13 +39,15 @@ def after_request(response):
 def handle_preflight():
     if request.method == "OPTIONS":
         origin = request.headers.get('Origin')
-        if origin and re.match(r'^https?://(localhost|127\.0\.0\.1)(:\d+)?/?$', origin):
-            response = jsonify({})
+        response = jsonify({})
+        if origin:
             response.headers['Access-Control-Allow-Origin'] = origin
             response.headers['Access-Control-Allow-Credentials'] = 'true'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, Accept, X-Auth-Token'
-            return response
+        else:
+            response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, Accept, X-Auth-Token'
+        return response
 
 # Configuration
 GMAIL_USER = os.environ.get('GMAIL_USER', 'sahilkumarsharmaprofessional@gmail.com')
@@ -133,13 +136,6 @@ def save_skills():
 load_messages()
 load_projects()
 
-# Handle preflight OPTIONS requests manually
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With,X-Auth-Token,Accept')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
 
 # Simple token-based authentication (for CORS compatibility)
 # In production, use proper JWT tokens
@@ -372,13 +368,12 @@ def send_reply_email():
             
     except Exception as e:
         print(f"Error in send_reply_email: {e}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         return jsonify({
             'success': False,
             'error': f'Server error: {str(e)}'
         }), 500
-            
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
