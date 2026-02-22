@@ -162,6 +162,11 @@ def admin_required(f):
 def send_email(to_email, subject, message_body):
     """Send email using Gmail SMTP"""
     try:
+        # Check if Gmail credentials are configured
+        if not GMAIL_USER or not GMAIL_PASS:
+            print("Error: Gmail credentials not configured")
+            return False
+        
         # Create message
         msg = MIMEMultipart()
         msg['From'] = GMAIL_USER
@@ -181,9 +186,15 @@ def send_email(to_email, subject, message_body):
         server.sendmail(GMAIL_USER, to_email, text)
         server.quit()
         
+        print(f"Email sent successfully to {to_email}")
         return True
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"SMTP Authentication Error: {e}")
+        print("Make sure you're using a Gmail App Password, not your regular password")
+        return False
     except Exception as e:
         print(f"Error sending email: {e}")
+        print(f"Error type: {type(e).__name__}")
         return False
 
 # Routes
@@ -331,7 +342,14 @@ def send_reply_email():
         
         # Validate required fields
         if 'to' not in data or 'subject' not in data or 'message' not in data:
-            return jsonify({'error': 'Missing required fields'}), 400
+            return jsonify({'success': False, 'error': 'Missing required fields: to, subject, or message'}), 400
+        
+        # Check if Gmail is configured
+        if not GMAIL_USER or not GMAIL_PASS:
+            return jsonify({
+                'success': False,
+                'error': 'Gmail credentials not configured. Please set GMAIL_USER and GMAIL_PASS environment variables in your Render dashboard.'
+            }), 500
         
         # Send email
         success = send_email(
@@ -346,10 +364,18 @@ def send_reply_email():
                 'message': 'Email sent successfully'
             }), 200
         else:
+            error_msg = 'Failed to send email. Please check:\n1. Gmail App Password is set correctly\n2. Gmail account has "Less secure app access" enabled (if using regular password)\n3. Check backend logs for detailed error'
             return jsonify({
                 'success': False,
-                'error': 'Failed to send email'
+                'error': error_msg
             }), 500
+            
+    except Exception as e:
+        print(f"Error in send_reply_email: {e}")
+        return jsonify({
+            'success': False,
+            'error': f'Server error: {str(e)}'
+        }), 500
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500

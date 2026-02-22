@@ -201,21 +201,39 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
         message: document.getElementById('replyMessage').value
     };
     
+    console.log('Sending reply email:', replyData);
+    console.log('API URL:', `${API_URL}/api/send-email`);
+    
     // Send email via Flask API
     fetch(`${API_URL}/api/send-email`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(replyData)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Send email response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(data => {
+                console.error('Send email error response:', data);
+                throw new Error(data.error || `Server error: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Send email success response:', data);
         if (data.success) {
             // Mark as replied
             fetch(`${API_URL}/api/messages/${currentMessageId}/replied`, {
                 method: 'PUT',
                 headers: getAuthHeaders()
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Failed to mark as replied: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Close modal first
@@ -226,6 +244,8 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
                     
                     // Reload messages to update the checkbox and badge
                     loadMessages();
+                } else {
+                    showSuccessMessage('Email sent but failed to update status.');
                 }
             })
             .catch(error => {
@@ -233,12 +253,14 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
                 showSuccessMessage('Email sent but failed to update status.');
             });
         } else {
-            alert('Error sending email: ' + (data.error || 'Unknown error'));
+            const errorMsg = data.error || 'Unknown error';
+            console.error('Email send failed:', errorMsg);
+            alert('Error sending email: ' + errorMsg);
         }
     })
     .catch(error => {
         console.error('Error sending email:', error);
-        alert('Error sending email. Please try again.');
+        alert('Error sending email: ' + error.message + '\n\nPlease check:\n1. Gmail credentials are configured in backend\n2. Gmail App Password is set correctly\n3. Backend server is running');
     });
 });
 
