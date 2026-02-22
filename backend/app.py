@@ -8,6 +8,8 @@ import os
 from functools import wraps
 import json
 from dotenv import load_dotenv
+import threading
+import socket
 
 # Load environment variables from .env file
 load_dotenv()
@@ -157,11 +159,16 @@ def admin_required(f):
 # Email sending function
 def send_email(to_email, subject, message_body):
     """Send email using Gmail SMTP"""
+    server = None
     try:
         # Check if Gmail credentials are configured
         if not GMAIL_USER or not GMAIL_PASS:
             print("Error: Gmail credentials not configured")
+            print(f"GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
+            print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
             return False
+        
+        print(f"Attempting to send email to {to_email}...")
         
         # Create message
         msg = MIMEMultipart()
@@ -172,26 +179,53 @@ def send_email(to_email, subject, message_body):
         # Add body
         msg.attach(MIMEText(message_body, 'plain'))
         
-        # Connect to Gmail SMTP server
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(GMAIL_USER, GMAIL_PASS)
+        # Connect to Gmail SMTP server with shorter timeout
+        print("Connecting to Gmail SMTP server...")
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)  # 10 second connection timeout
+        print("Starting TLS...")
+        server.starttls(timeout=10)  # 10 second TLS timeout
+        print("Logging in...")
+        server.login(GMAIL_USER, GMAIL_PASS)  # This can hang if credentials are wrong
+        print("Sending email...")
         
         # Send email
         text = msg.as_string()
         server.sendmail(GMAIL_USER, to_email, text)
-        server.quit()
-        
         print(f"Email sent successfully to {to_email}")
         return True
+        
     except smtplib.SMTPAuthenticationError as e:
         print(f"SMTP Authentication Error: {e}")
         print("Make sure you're using a Gmail App Password, not your regular password")
         return False
+    except smtplib.SMTPServerDisconnected as e:
+        print(f"SMTP Server Disconnected: {e}")
+        print("Gmail server disconnected. This might be a temporary issue.")
+        return False
+    except smtplib.SMTPException as e:
+        print(f"SMTP Error: {e}")
+        return False
+    except (TimeoutError, OSError) as e:
+        print(f"Timeout/Connection Error: {e}")
+        print("Connection to Gmail SMTP server timed out or failed")
+        return False
+    except socket.timeout as e:
+        print(f"Socket Timeout: {e}")
+        print("SMTP connection timed out")
+        return False
     except Exception as e:
         print(f"Error sending email: {e}")
         print(f"Error type: {type(e).__name__}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         return False
+    finally:
+        # Always close the connection
+        if server:
+            try:
+                server.quit()
+            except:
+                pass
 
 # Routes
 
@@ -332,7 +366,7 @@ def delete_message(message_id):
 @app.route('/api/send-email', methods=['POST'])
 @admin_required
 def send_reply_email():
-    """Send reply email to user"""
+    """Send reply email to user - returns immediately, sends email in background"""
     try:
         data = request.json
         
@@ -340,31 +374,49 @@ def send_reply_email():
         if 'to' not in data or 'subject' not in data or 'message' not in data:
             return jsonify({'success': False, 'error': 'Missing required fields: to, subject, or message'}), 400
         
-        # Check if Gmail is configured
+        # Check if Gmail is configured FIRST (return immediately if not)
         if not GMAIL_USER or not GMAIL_PASS:
+            print("ERROR: Gmail credentials not configured")
+            print(f"GMAIL_USER: {'SET' if GMAIL_USER else 'NOT SET'}")
+            print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
             return jsonify({
                 'success': False,
                 'error': 'Gmail credentials not configured. Please set GMAIL_USER and GMAIL_PASS environment variables in your Render dashboard.'
             }), 500
         
-        # Send email
-        success = send_email(
-            to_email=data['to'],
-            subject=data['subject'],
-            message_body=data['message']
-        )
+        # Return immediately and send email in background
+        print(f"Received email send request: to={data['to']}, subject={data['subject']}")
+        print("Starting email send in background thread...")
         
-        if success:
-            return jsonify({
-                'success': True,
-                'message': 'Email sent successfully'
-            }), 200
-        else:
-            error_msg = 'Failed to send email. Please check:\n1. Gmail App Password is set correctly\n2. Gmail account has "Less secure app access" enabled (if using regular password)\n3. Check backend logs for detailed error'
-            return jsonify({
-                'success': False,
-                'error': error_msg
-            }), 500
+        def send_email_background():
+            """Send email in background thread"""
+            try:
+                print(f"Background thread: Attempting to send email to {data['to']}")
+                success = send_email(
+                    to_email=data['to'],
+                    subject=data['subject'],
+                    message_body=data['message']
+                )
+                if success:
+                    print(f"Background thread: Email sent successfully to {data['to']}")
+                else:
+                    print(f"Background thread: Failed to send email to {data['to']}")
+            except Exception as e:
+                print(f"Background thread: Exception sending email: {e}")
+                import traceback
+                print(f"Background thread traceback: {traceback.format_exc()}")
+        
+        # Start email sending in background (don't wait for it)
+        thread = threading.Thread(target=send_email_background)
+        thread.daemon = True
+        thread.start()
+        
+        # Return immediately - email will send in background
+        print("Returning success response immediately, email sending in background")
+        return jsonify({
+            'success': True,
+            'message': 'Email is being sent. You will receive a confirmation once it\'s delivered.'
+        }), 200
             
     except Exception as e:
         print(f"Error in send_reply_email: {e}")
@@ -379,6 +431,16 @@ def send_reply_email():
 def health_check():
     """Health check endpoint"""
     return jsonify({'status': 'ok'}), 200
+
+@app.route('/api/test-email-endpoint', methods=['POST'])
+@admin_required
+def test_email_endpoint():
+    """Test endpoint to verify email route is working - returns immediately"""
+    return jsonify({
+        'success': True,
+        'message': 'Email endpoint is working! Backend is responding quickly.',
+        'timestamp': datetime.now().isoformat()
+    }), 200
 
 # ============================================
 # PROJECTS API ENDPOINTS

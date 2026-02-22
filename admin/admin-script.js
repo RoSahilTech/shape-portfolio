@@ -205,9 +205,9 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
     console.log('API URL:', `${API_URL}/api/send-email`);
     console.log('Auth headers:', getAuthHeaders());
     
-    // Add timeout to prevent hanging
+    // Add timeout to prevent hanging (backend now returns immediately, so shorter timeout is fine)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout (backend should respond quickly now)
     
     // Send email via Flask API
     fetch(`${API_URL}/api/send-email`, {
@@ -282,7 +282,7 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
         let errorMessage = 'Error sending email: ' + error.message;
         
         if (error.name === 'AbortError') {
-            errorMessage = 'Request timed out. The server may be taking too long to send the email. Please check:\n1. Gmail credentials are configured\n2. Backend server is running\n3. Try again in a moment';
+            errorMessage = 'Request timed out. Please check:\n1. Backend server is running and accessible\n2. Internet connection is stable\n3. Try again in a moment';
         } else if (error.message.includes('Failed to fetch')) {
             errorMessage = 'Network error: Could not connect to server. Please check:\n1. Backend server is running\n2. Internet connection is stable';
         } else if (error.message.includes('Gmail credentials')) {
