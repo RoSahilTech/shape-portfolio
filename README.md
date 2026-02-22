@@ -370,71 +370,204 @@ flask-cors==4.0.0
      ⚠️ **CRITICAL**: This tells Render to look in the `backend` folder for `app.py` and `requirements.txt`
 
 6. **Choose Plan**:
-   - Select **"Free"** plan (sufficient for most portfolios)
-   - Free plan limitations:
+   - You'll see a section called **"Instance Types"**
+   - Under **"For hobby projects"**, you'll see a purple box with **"Free"** plan
+   - Click on the **"Free"** plan box (it shows "$0 / month", "512 MB RAM", "0.1 CPU")
+   - ⚠️ **Note**: Free plan limitations:
      - Service spins down after 15 minutes of inactivity
      - First request after spin-down takes ~30 seconds
-     - This is fine for portfolios
+     - This is fine for portfolios (you don't need to upgrade)
 
 7. **Click "Create Web Service"**:
-   - Render will start deploying
-   - You'll see build logs in real-time
-   - **First deployment takes 5-10 minutes**
+   - Scroll down to the bottom of the page
+   - Click the blue **"Create Web Service"** button
+   - Render will start deploying immediately
+   - You'll be redirected to your service page
+   - You'll see build logs in real-time at the bottom
+   - **First deployment takes 5-10 minutes** - be patient!
 
 ### 2.3 Add Environment Variables
 
-While the first deployment is running, add environment variables:
+**IMPORTANT**: You can add environment variables while the deployment is running OR after it completes. Both work!
+
+**What You'll See on Screen**:
+When you're on the Environment page, you'll see:
+- **Left sidebar**: Navigation menu with "Environment" highlighted (purple)
+- **Main area**: 
+  - Top: Your service URL (e.g., `https://shape-portfolio-api.onrender.com`)
+  - Heading: "Environment"
+  - Section: "Environment Variables" with description text
+  - **"+ Add" button** - This is what you'll click!
+  
+**When you click "+ Add"**, a dropdown menu appears with:
+- ✅ **"New variable"** ← Click this for each variable you want to add
+- "Datastore URL >" (ignore)
+- "Generated secret" (ignore)  
+- "Import from .env" (ignore)
 
 1. **Navigate to Environment Tab**:
-   - In your Render service page, click **"Environment"** in the left sidebar
-   - Or click the **"Environment"** tab at the top
+   - On your Render service page (after clicking "Create Web Service")
+   - Look at the **left sidebar** - you'll see tabs like:
+     - Overview
+     - **Environment** ← Click this one!
+     - Events
+     - Logs
+     - Settings
+   - OR look at the **top tabs** - click **"Environment"** tab
+   - You'll see a section called **"Environment Variables"**
 
-2. **Add Required Variables**:
+2. **Understanding the Interface**:
+   - You'll see a section called **"Environment Variables"**
+   - There's a **"+ Add"** button - click it!
+   - A dropdown menu will appear with 4 options:
+     - ✅ **"New variable"** ← Click this one!
+     - "Datastore URL >" (ignore this)
+     - "Generated secret" (ignore this)
+     - "Import from .env" (ignore this)
+   - Click **"New variable"** from the dropdown
 
-   Click **"Add Environment Variable"** for each of these:
+3. **Add Your First Variable - SECRET_KEY**:
 
-   | Key | Value | Description |
-   |-----|-------|-------------|
-   | `SECRET_KEY` | `your-random-secret-key-here-make-it-long` | Flask session secret (generate a random string) |
-   | `ADMIN_USERNAME` | `admin` | Username for admin dashboard login |
-   | `ADMIN_PASSWORD` | `your-secure-password` | Password for admin dashboard (use a strong password) |
-   | `ADMIN_TOKEN` | `shape-admin-token-2024` | Token for API authentication (any random string) |
-   | `PORT` | (leave empty) | Render sets this automatically |
-   | `FLASK_DEBUG` | `0` | Set to `0` for production (or `1` for debug mode) |
-
-   **To generate a random SECRET_KEY**:
-   - Open PowerShell and run:
+   **Step 1**: Generate a random SECRET_KEY
+   - Open PowerShell on your computer
+   - Run this command:
      ```powershell
      python -c "import secrets; print(secrets.token_urlsafe(32))"
      ```
-   - Copy the output and use it as `SECRET_KEY`
+   - Copy the output (it will be a long random string like `xK9mP2qR7vW4nT8yU1zA5bC6dE3fG0hI2jK4lM6nO8pQ0`)
+   - Keep this copied - you'll need it
 
-   **Example values** (use your own):
-   - `SECRET_KEY`: `xK9mP2qR7vW4nT8yU1zA5bC6dE3fG0hI2jK4lM6nO8pQ0`
-   - `ADMIN_USERNAME`: `admin`
-   - `ADMIN_PASSWORD`: `MySecurePass123!`
-   - `ADMIN_TOKEN`: `shape-admin-token-2024`
+   **Step 2**: Add it to Render
+   - After clicking "New variable", you'll see two input fields appear:
+     - **Left field** (Key/Name): Type `SECRET_KEY`
+     - **Right field** (Value): Paste the random string you copied
+   - Click **"Add"** button (or the checkmark/save icon)
+   - ✅ You should see `SECRET_KEY` appear in a list below with your value
 
-3. **Optional: Email Configuration** (skip if you don't need email):
+4. **Add ADMIN_USERNAME**:
+   - Click the **"+ Add"** button again
+   - Select **"New variable"** from the dropdown
+   - **Left field** (Key): Type `ADMIN_USERNAME`
+   - **Right field** (Value): Type `admin` (or any username you want)
+   - Click **"Add"** button
+   - ✅ You should now see 2 variables in the list
 
-   If you want the contact form to send emails:
+5. **Add ADMIN_PASSWORD**:
+   - Click the **"+ Add"** button again
+   - Select **"New variable"** from the dropdown
+   - **Left field** (Key): Type `ADMIN_PASSWORD`
+   - **Right field** (Value): Type a strong password (e.g., `MySecurePass123!`)
+   - ⚠️ **Important**: Use a strong password - this protects your admin dashboard!
+   - Click **"Add"** button
+   - ✅ You should now see 3 variables
 
-   | Key | Value |
-   |-----|-------|
-   | `GMAIL_USER` | `your-email@gmail.com` |
-   | `GMAIL_PASS` | `your-app-password` |
+6. **Add ADMIN_TOKEN**:
+   - Click the **"+ Add"** button again
+   - Select **"New variable"** from the dropdown
+   - **Left field** (Key): Type `ADMIN_TOKEN`
+   - **Right field** (Value): Type `shape-admin-token-2024` (or any random string)
+   - Click **"Add"** button
+   - ✅ You should now see 4 variables
 
-   **To get Gmail App Password**:
-   - Go to Google Account settings
-   - Security → 2-Step Verification (enable if not enabled)
-   - App passwords → Generate app password
-   - Copy the 16-character password
-   - Use it as `GMAIL_PASS`
+7. **Add FLASK_DEBUG**:
+   - Click the **"+ Add"** button again
+   - Select **"New variable"** from the dropdown
+   - **Left field** (Key): Type `FLASK_DEBUG`
+   - **Right field** (Value): Type `0` (zero - this means production mode)
+   - Click **"Add"** button
+   - ✅ You should now see 5 variables
 
-4. **Save Changes**:
-   - After adding all variables, click **"Save Changes"**
-   - Render will automatically redeploy with the new environment variables
-   - Wait for the redeploy to complete (watch the "Events" tab)
+8. **DO NOT add PORT**:
+   - ⚠️ **Skip PORT** - Render sets this automatically
+   - You don't need to add it manually
+
+9. **Check Your Variables**:
+   - You should see a list with these 5 variables:
+     ```
+     SECRET_KEY          [your-random-string]
+     ADMIN_USERNAME      admin
+     ADMIN_PASSWORD      [your-password]
+     ADMIN_TOKEN         shape-admin-token-2024
+     FLASK_DEBUG         0
+     ```
+
+10. **Optional: Add Email Variables** (skip if you don't need email):
+    
+    If you want the contact form to send emails:
+    
+    **Add GMAIL_USER**:
+    - Click the **"+ Add"** button
+    - Select **"New variable"** from the dropdown
+    - **Left field** (Key): Type `GMAIL_USER`
+    - **Right field** (Value): Type `your-email@gmail.com`
+    - Click **"Add"** button
+    
+    **Add GMAIL_PASS**:
+    - First, get your Gmail App Password:
+      1. Go to: `https://myaccount.google.com/security`
+      2. Enable "2-Step Verification" if not enabled
+      3. Go to "App passwords" (search for it in the search bar)
+      4. Click "Generate" → Select "Mail" → Select "Other" → Type "Render"
+      5. Copy the 16-character password (looks like: `abcd efgh ijkl mnop`)
+    - Click the **"+ Add"** button
+    - Select **"New variable"** from the dropdown
+    - **Left field** (Key): Type `GMAIL_PASS`
+    - **Right field** (Value): Paste the 16-character password (remove spaces)
+    - Click **"Add"** button
+
+11. **Save Changes**:
+    - ⚠️ **Important**: In Render's new interface, variables are saved automatically!
+    - After clicking "Add" for each variable, it's immediately saved
+    - You don't need to click a separate "Save Changes" button
+    - Render will automatically redeploy when you add variables
+    - Check the "Events" tab or "Logs" tab to see the redeploy progress
+    - This takes 2-5 minutes
+
+**Troubleshooting Environment Variables**:
+
+- **Can't find the Environment tab?**
+  - Make sure you're on your service page (not the dashboard)
+  - Look in the left sidebar - it should be there
+  - If still not visible, wait for the initial deployment to start
+
+- **Variables not saving?**
+  - Make sure you clicked "Save Changes" button
+  - Check that variable names don't have spaces
+  - Variable names should be UPPERCASE
+
+- **Want to edit a variable?**
+  - Click on the variable in the list
+  - Edit the value
+  - Click "Save Changes"
+
+- **Want to delete a variable?**
+  - Click the trash can icon (🗑️) next to the variable
+  - Click "Save Changes"
+
+**Quick Reference - All Variables You Need**:
+
+Copy-paste this list and fill in your values:
+
+```
+SECRET_KEY          → [Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"]
+ADMIN_USERNAME      → admin
+ADMIN_PASSWORD      → [Your secure password]
+ADMIN_TOKEN         → shape-admin-token-2024
+FLASK_DEBUG         → 0
+GMAIL_USER          → [Optional: your-email@gmail.com]
+GMAIL_PASS          → [Optional: Gmail app password]
+```
+
+**Step-by-Step Summary**:
+1. ✅ Click "Environment" tab (left sidebar)
+2. ✅ Click "+ Add" button
+3. ✅ Select "New variable" from dropdown
+4. ✅ Type variable name in left field (Key)
+5. ✅ Type variable value in right field (Value)
+6. ✅ Click "Add" button
+7. ✅ Repeat steps 2-6 for each variable
+8. ✅ Variables save automatically - no "Save Changes" button needed!
+9. ✅ Wait for auto-redeploy (2-5 minutes)
 
 ### 2.4 Verify Backend Deployment
 
@@ -584,7 +717,7 @@ Netlify will serve your HTML, CSS, and JavaScript files to visitors.
 
 ### 4.2 Configure Build Settings
 
-Netlify will show "Configure build settings" screen:
+**If you're setting up a NEW site**, Netlify will show "Configure build settings" screen:
 
 1. **Branch to deploy**: 
    - Select `main` (should be selected by default)
@@ -608,6 +741,46 @@ Netlify will show "Configure build settings" screen:
    - You'll see build logs
    - **First deployment takes 2-5 minutes**
 
+**If your site is ALREADY DEPLOYED** (like yours), check/update build settings:
+
+1. **Access Deploy Settings**:
+   - In your Netlify dashboard, you're currently on the **"Deploys"** page
+   - Look at the top left card "Deploys for soft-malabi-921097"
+   - Click the **"Deploy settings"** button (it has a gear icon ⚙️)
+   - This will open the build settings page
+
+2. **Alternative Method - Via Left Sidebar**:
+   - In the **left sidebar**, click **"Project configuration"**
+   - Scroll down to find **"Build settings"** section
+   - Click **"Edit settings"** or **"Change settings"** button
+
+3. **Check/Update Build Settings**:
+   Once you're in the settings page, you'll see:
+   
+   - **Build command**: 
+     - Should be **EMPTY** (completely blank)
+     - If there's any text (like `npm run build`), **delete it**
+     - Leave it empty
+   
+   - **Publish directory**: 
+     - Should be **`.`** (a single dot, period)
+     - This tells Netlify to serve files from the project root
+     - If it's empty or says `dist` or `build`, change it to `.`
+   
+   - **Base directory**: 
+     - Should be **empty** (leave blank)
+     - Only fill this if your files are in a subfolder
+
+4. **Save Changes**:
+   - After updating, click **"Save"** button (usually at the bottom)
+   - Netlify will automatically trigger a new deploy
+   - Go back to **"Deploys"** tab to watch the deployment
+
+5. **Verify Deployment**:
+   - In the **"Deploys"** tab, you'll see a new deployment starting
+   - Wait for it to complete (usually 1-2 minutes)
+   - Status should show **"Published"** (green) when done
+
 ### 4.3 Wait for Deployment
 
 1. **Watch the Build Logs**:
@@ -627,16 +800,64 @@ Netlify will show "Configure build settings" screen:
 
 ### 4.4 Customize Site Name (Optional)
 
-1. **Change Site Name**:
-   - In your Netlify site dashboard, click **"Site settings"**
-   - Click **"Change site name"** under "Site information"
-   - Enter a name like: `shape-portfolio` or `yourname-portfolio`
-   - Click **"Save"**
+**Note**: Changing the site name is optional. Your site works fine with the auto-generated name like `soft-malabi-921097.netlify.app`. If you want a custom name, follow these steps:
+
+**Method 1: Via Project Configuration** (Recommended):
+
+1. **Go to Project Configuration**:
+   - In the **left sidebar**, click **"Project configuration"**
+   - Look for **"General"** or **"Site information"** section
+   - Find **"Site name"** or **"Site slug"** field
+
+2. **Change the Name**:
+   - Click **"Edit"** or the name field itself
+   - Enter a new name like: `shape-portfolio` or `yourname-portfolio`
+   - Click **"Save"** or **"Update"**
    - Your new URL will be: `https://your-chosen-name.netlify.app`
 
-2. **Note the URL**:
-   - Copy your Netlify URL
-   - You'll use this to access your live website
+**Method 2: Via Domain Management**:
+
+1. **Go to Domain Management**:
+   - In the **left sidebar**, click **"Domain management"**
+   - Look for **"Site name"** or **"Custom domain"** section
+   - Click **"Options"** or **"Edit"** next to your current domain
+
+2. **Update Site Name**:
+   - You'll see your current site name
+   - Click to edit it
+   - Enter your new name
+   - Click **"Save"**
+
+**Method 3: Click on the Site Name** (If available):
+
+1. **Look at the top of your dashboard**:
+   - You might see your site name/URL displayed
+   - Click on it or look for an edit icon (pencil icon ✏️)
+   - This might open the rename option
+
+**If the name is already taken**:
+
+- Netlify will show an error: "This name is already taken"
+- Try variations like:
+  - `shape-portfolio-2024`
+  - `shape-portfolio-site`
+  - `yourname-shape-portfolio`
+  - `shape-portfolio-dev`
+  - `shape-engineering-portfolio`
+  - Or use your name: `sahil-shape-portfolio`
+
+**If you can't find the option or name is taken**:
+
+- **It's okay!** Your site works perfectly with the auto-generated name
+- The current URL `soft-malabi-921097.netlify.app` is fine
+- You can always add a custom domain later (see Section 7 in README)
+- Focus on making sure your site works correctly first
+- The site name doesn't affect functionality - it's just the URL
+
+**Note the URL**:
+   - Your current URL is: `https://soft-malabi-921097.netlify.app`
+   - Copy this URL - you'll use it to access your live website
+   - Test it in your browser to make sure everything works
 
 ### 4.5 Verify Frontend Deployment
 
@@ -860,10 +1081,35 @@ Common issues and how to fix them.
    - `image.jpg` ≠ `Image.jpg`
    - Ensure exact match
 
-4. **Verify Netlify Deployment**:
+4. **Verify Files Are on GitHub**:
+   - Go to your GitHub repository: `https://github.com/RoSahilTech/shape-portfolio`
+   - Navigate to `image/project/pro5/` folder
+   - Verify all 5 image files are there (ima1.jpg, ima2.jpg, ima3.jpg, ima4.jpg, ima5.jpg)
+   - If files are missing on GitHub:
+     ```powershell
+     git add image/project/pro5/*.jpg
+     git commit -m "Add missing project images"
+     git push
+     ```
+
+5. **Verify Netlify Deployment**:
    - In Netlify, go to "Deploys" tab
    - Check latest deploy includes image files
-   - If images are missing, they weren't committed to Git
+   - If images are missing, trigger a new deploy:
+     - Click "Trigger deploy" → "Deploy site"
+     - Wait for deployment to complete
+
+6. **Test Image URLs Directly**:
+   - Try accessing images directly:
+     - `https://soft-malabi-921097.netlify.app/image/project/pro5/ima1.jpg`
+     - `https://soft-malabi-921097.netlify.app/image/project/pro5/ima2.jpg`
+     - If you get 404, images aren't on Netlify
+     - If images load, the issue is in the JavaScript code
+
+7. **Check File Sizes**:
+   - Large images (>5MB) might not deploy properly
+   - Compress images if they're too large
+   - Use tools like TinyPNG or Squoosh to optimize
 
 ### 6.3 PDF Reports Not Showing
 
@@ -941,7 +1187,81 @@ Common issues and how to fix them.
    - No trailing slash
    - Correct domain
 
-### 6.6 Render Service Keeps Stopping
+### 6.6 Site Loading Very Slowly
+
+**Symptoms**: Site takes 30+ seconds to load, especially on first visit
+
+**Common Causes & Solutions**:
+
+1. **Render Free Plan Spin-Down** (Most Common):
+   - **Problem**: Render free plan spins down after 15 minutes of inactivity
+   - **First request after spin-down takes ~30 seconds** to wake up
+   - **Solution Options**:
+     - **Option A**: Wait 30 seconds on first load (it's normal for free plan)
+     - **Option B**: Upgrade to Render "Starter" plan ($7/month) - stays awake 24/7
+     - **Option C**: Use a free service like UptimeRobot to ping your API every 10 minutes (keeps it awake)
+     - **Option D**: Accept the delay - it's only on the first request after inactivity
+
+2. **Large Image Files**:
+   - **Problem**: Unoptimized images slow down page load
+   - **Solution**:
+     - Compress images before uploading (use tools like TinyPNG, Squoosh)
+     - Use WebP format instead of JPG/PNG when possible
+     - Resize images to appropriate dimensions (don't use 4000px images for 400px display)
+     - Check image sizes in your `image/` folder
+
+3. **API Calls Taking Too Long**:
+   - **Problem**: Frontend waiting for API responses
+   - **Solution**:
+     - Check if API URL is correct in `projects-script.js` and `admin/admin-script.js`
+     - Test API directly: `https://shape-portfolio-api.onrender.com/api/health`
+     - If API is slow, it's likely the Render spin-down issue (see #1)
+
+4. **Too Many Resources Loading**:
+   - **Problem**: Loading too many files at once
+   - **Solution**:
+     - Check browser Network tab (F12 → Network)
+     - Look for files taking long to load
+     - Consider lazy-loading images
+     - Minimize JavaScript and CSS files
+
+5. **Network Issues**:
+   - **Problem**: Slow internet connection or geographic distance
+   - **Solution**:
+     - Test from different network/location
+     - Check Netlify CDN is working (should be fast globally)
+     - Render servers might be far from your location
+
+**Quick Diagnosis Steps**:
+
+1. **Open Browser Developer Tools** (F12):
+   - Go to **"Network"** tab
+   - Reload the page
+   - Look for requests taking long (red or yellow bars)
+   - Check which file/API call is slow
+
+2. **Check Render Logs**:
+   - Go to Render dashboard → Your service → "Logs" tab
+   - Look for slow requests or errors
+   - Check if service is "Live" or "Stopped"
+
+3. **Test API Directly**:
+   - Open: `https://shape-portfolio-api.onrender.com/api/health`
+   - Time how long it takes
+   - If it takes 30+ seconds, it's the Render spin-down (normal for free plan)
+
+**Expected Behavior**:
+- **First visit after 15+ minutes of inactivity**: 30-40 seconds (Render waking up)
+- **Subsequent visits within 15 minutes**: 1-3 seconds (normal)
+- **Page load (after API responds)**: 1-2 seconds
+
+**If it's always slow** (even after first load):
+- Check image file sizes
+- Check browser console for errors
+- Check Network tab for slow resources
+- Consider optimizing images
+
+### 6.7 Render Service Keeps Stopping
 
 **Symptoms**: Backend works sometimes, then stops responding
 

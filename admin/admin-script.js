@@ -15,13 +15,28 @@ function getAuthHeaders() {
     };
 }
 
-// Check authentication
-if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
-    window.location.href = 'admin-login.html';
+// Check authentication - wait for DOM to be ready
+function checkAuthAndInit() {
+    // Check authentication
+    if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.href = 'admin-login.html';
+        return;
+    }
+    
+    // Display username - only if element exists
+    const usernameElement = document.getElementById('adminUsername');
+    if (usernameElement) {
+        usernameElement.textContent = sessionStorage.getItem('adminUsername') || 'Admin';
+    }
 }
 
-// Display username
-document.getElementById('adminUsername').textContent = sessionStorage.getItem('adminUsername') || 'Admin';
+// Run check when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAuthAndInit);
+} else {
+    // DOM is already ready
+    checkAuthAndInit();
+}
 
 // Store messages globally
 let messages = [];

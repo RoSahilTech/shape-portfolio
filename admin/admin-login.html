@@ -219,9 +219,15 @@
                 if (!response.ok) {
                     return response.json().then(data => {
                         throw new Error(data.error || 'Login failed');
+                    }).catch(() => {
+                        // If JSON parsing fails, throw a generic error
+                        throw new Error(`Login failed with status ${response.status}`);
                     });
                 }
-                return response.json();
+                return response.json().catch(() => {
+                    // If JSON parsing fails, throw a generic error
+                    throw new Error('Invalid response from server');
+                });
             })
             .then(data => {
                 console.log('Login response:', data);
@@ -233,8 +239,18 @@
                         sessionStorage.setItem('adminToken', data.token);
                     }
                     
-                    // Redirect to admin dashboard
-                    window.location.href = 'admin-dashboard.html';
+                    // Verify sessionStorage was set
+                    console.log('SessionStorage set:', {
+                        adminLoggedIn: sessionStorage.getItem('adminLoggedIn'),
+                        adminUsername: sessionStorage.getItem('adminUsername'),
+                        adminToken: sessionStorage.getItem('adminToken') ? 'Set' : 'Not set'
+                    });
+                    
+                    // Use replace instead of href to prevent back button issues
+                    // Add small delay to ensure sessionStorage is committed
+                    setTimeout(() => {
+                        window.location.replace('admin-dashboard.html');
+                    }, 100);
                 } else {
                     errorMessage.textContent = data.error || 'Invalid credentials. Please try again.';
                     errorMessage.classList.add('show');
@@ -255,7 +271,7 @@
 
         // Check if already logged in
         if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-            window.location.href = 'admin-dashboard.html';
+            window.location.replace('admin-dashboard.html');
         }
     </script>
 </body>
