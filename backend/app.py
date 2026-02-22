@@ -392,17 +392,27 @@ def send_reply_email():
             """Send email in background thread"""
             try:
                 print(f"Background thread: Attempting to send email to {data['to']}")
+                print(f"Background thread: Using Gmail account: {GMAIL_USER}")
+                print(f"Background thread: Gmail password is {'SET' if GMAIL_PASS else 'NOT SET'}")
+                
                 success = send_email(
                     to_email=data['to'],
                     subject=data['subject'],
                     message_body=data['message']
                 )
+                
                 if success:
-                    print(f"Background thread: Email sent successfully to {data['to']}")
+                    print(f"✅ Background thread: Email sent successfully to {data['to']}")
+                    print(f"✅ Check recipient's inbox (and spam folder) for the email")
                 else:
-                    print(f"Background thread: Failed to send email to {data['to']}")
+                    print(f"❌ Background thread: Failed to send email to {data['to']}")
+                    print(f"❌ Check logs above for the specific error message")
+                    print(f"❌ Common issues:")
+                    print(f"   1. Gmail credentials not configured in Render")
+                    print(f"   2. Gmail App Password is incorrect")
+                    print(f"   3. 2-Step Verification not enabled on Gmail account")
             except Exception as e:
-                print(f"Background thread: Exception sending email: {e}")
+                print(f"❌ Background thread: Exception sending email: {e}")
                 import traceback
                 print(f"Background thread traceback: {traceback.format_exc()}")
         
