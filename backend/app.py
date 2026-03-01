@@ -13,6 +13,10 @@ import socket
 import sys
 import logging
 import ssl
+try:
+    import requests
+except ImportError:
+    requests = None
 
 # Configure logging to ensure output appears in Render logs
 logging.basicConfig(
@@ -74,6 +78,7 @@ def handle_preflight():
 # Configuration
 GMAIL_USER = os.environ.get('GMAIL_USER', 'sahilkumarsharmaprofessional@gmail.com')
 GMAIL_PASS = os.environ.get('GMAIL_PASS', '')  # Set this in environment variable
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')  # Resend API key (alternative to SMTP)
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')  # Change this!
 
@@ -176,9 +181,60 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Email sending function using Resend API (works on free tier)
+def send_email_via_resend(to_email, subject, message_body):
+    """Send email using Resend API - works on Render free tier"""
+    try:
+        if not RESEND_API_KEY:
+            log_print("❌ RESEND_API_KEY not set")
+            return False
+        
+        if requests is None:
+            log_print("❌ 'requests' library not installed. Install with: pip install requests")
+            return False
+        
+        log_print("Sending email via Resend API...")
+        
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "from": f"Portfolio <{GMAIL_USER}>",
+            "to": [to_email],
+            "subject": subject,
+            "text": message_body
+        }
+        
+        response = requests.post(url, json=data, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            log_print(f"✅ Email sent successfully via Resend API to {to_email}")
+            return True
+        else:
+            log_print(f"❌ Resend API error: {response.status_code} - {response.text}")
+            return False
+            
+    except Exception as e:
+        log_print(f"❌ Resend API exception: {type(e).__name__}: {e}")
+        return False
+
 # Email sending function
 def send_email(to_email, subject, message_body):
-    """Send email using Gmail SMTP - tries port 587 first, then 465"""
+    """Send email - tries Resend API first, then Gmail SMTP as fallback"""
+    
+    # Try Resend API first (works on free tier)
+    if RESEND_API_KEY:
+        log_print("=" * 60)
+        log_print("Attempting to send via Resend API (recommended for free tier)...")
+        log_print("=" * 60)
+        if send_email_via_resend(to_email, subject, message_body):
+            return True
+        log_print("Resend API failed, trying SMTP fallback...")
+        log_print("=" * 60)
+    
+    # Fallback to SMTP
     server = None
     
     # Strip spaces from Gmail password (App Passwords are 16 chars, user might have copied with spaces)
@@ -205,24 +261,38 @@ def send_email(to_email, subject, message_body):
         msg.attach(MIMEText(message_body, 'plain'))
         
         # Try port 587 with STARTTLS first
+        port_587_success = False
         try:
             log_print("Trying port 587 (STARTTLS)...")
-            server = smtplib.SMTP('smtp.gmail.com', 587, timeout=15)
-            log_print("Connected! Starting TLS...")
-            server.starttls(timeout=15)
-            log_print("TLS started! Logging in...")
+            log_print("Creating SMTP connection (timeout: 10 seconds)...")
+            
+            # Test connection first with socket
+            try:
+                test_socket = socket.create_connection(('smtp.gmail.com', 587), timeout=10)
+                test_socket.close()
+                log_print("Socket connection test successful!")
+            except Exception as sock_err:
+                log_print(f"❌ Socket connection test failed: {sock_err}")
+                log_print("Port 587 is blocked or unreachable, trying port 465...")
+                raise sock_err
+            
+            server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)
+            log_print("✅ Connected to SMTP server! Starting TLS...")
+            server.starttls(timeout=10)
+            log_print("✅ TLS started! Logging in...")
             server.login(GMAIL_USER, gmail_pass_clean)
-            log_print("Logged in! Sending email...")
+            log_print("✅ Logged in! Sending email...")
             
             # Send email
             text = msg.as_string()
             server.sendmail(GMAIL_USER, to_email, text)
             log_print(f"✅ Email sent successfully to {to_email} via port 587")
+            port_587_success = True
             return True
             
-        except (OSError, socket.error, TimeoutError, socket.timeout) as e:
-            log_print(f"Port 587 failed: {e}")
-            if server:
+        except Exception as e:
+            log_print(f"❌ Port 587 failed: {type(e).__name__}: {e}")
+            if 'server' in locals() and server:
                 try:
                     server.quit()
                 except:
@@ -230,23 +300,41 @@ def send_email(to_email, subject, message_body):
                 server = None
             
             # Try port 465 with SSL as fallback
-            try:
-                log_print("Trying port 465 (SSL) as fallback...")
-                context = ssl.create_default_context()
-                server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15, context=context)
-                log_print("Connected via SSL! Logging in...")
-                server.login(GMAIL_USER, gmail_pass_clean)
-                log_print("Logged in! Sending email...")
-                
-                # Send email
-                text = msg.as_string()
-                server.sendmail(GMAIL_USER, to_email, text)
-                log_print(f"✅ Email sent successfully to {to_email} via port 465")
-                return True
-                
-            except Exception as e2:
-                log_print(f"Port 465 also failed: {e2}")
-                raise e2  # Re-raise the original error
+            if not port_587_success:
+                try:
+                    log_print("=" * 60)
+                    log_print("Trying port 465 (SSL) as fallback...")
+                    log_print("Creating SSL connection (timeout: 10 seconds)...")
+                    
+                    # Test SSL connection first
+                    try:
+                        test_socket = socket.create_connection(('smtp.gmail.com', 465), timeout=10)
+                        test_socket.close()
+                        log_print("SSL socket connection test successful!")
+                    except Exception as sock_err:
+                        log_print(f"❌ SSL socket connection test failed: {sock_err}")
+                        log_print("❌ Both ports 587 and 465 are blocked!")
+                        log_print("❌ Render free tier is blocking SMTP connections")
+                        raise sock_err
+                    
+                    context = ssl.create_default_context()
+                    server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=10, context=context)
+                    log_print("✅ Connected via SSL! Logging in...")
+                    server.login(GMAIL_USER, gmail_pass_clean)
+                    log_print("✅ Logged in! Sending email...")
+                    
+                    # Send email
+                    text = msg.as_string()
+                    server.sendmail(GMAIL_USER, to_email, text)
+                    log_print(f"✅ Email sent successfully to {to_email} via port 465")
+                    log_print("=" * 60)
+                    return True
+                    
+                except Exception as e2:
+                    log_print(f"❌ Port 465 also failed: {type(e2).__name__}: {e2}")
+                    log_print("=" * 60)
+                    # Don't re-raise, let outer exception handler catch it
+                    raise e2
         
     except smtplib.SMTPAuthenticationError as e:
         log_print(f"❌ SMTP Authentication Error: {e}")
