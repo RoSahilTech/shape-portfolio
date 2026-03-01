@@ -385,15 +385,28 @@ def send_reply_email():
             }), 500
         
         # Return immediately and send email in background
-        print(f"Received email send request: to={data['to']}, subject={data['subject']}")
-        print("Starting email send in background thread...")
+        print("=" * 80)
+        print(f"📧 EMAIL SEND REQUEST RECEIVED")
+        print(f"   To: {data['to']}")
+        print(f"   Subject: {data['subject']}")
+        print(f"   GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
+        print(f"   GMAIL_PASS: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET'}")
+        print("=" * 80)
         
         def send_email_background():
             """Send email in background thread"""
             try:
-                print(f"Background thread: Attempting to send email to {data['to']}")
-                print(f"Background thread: Using Gmail account: {GMAIL_USER}")
-                print(f"Background thread: Gmail password is {'SET' if GMAIL_PASS else 'NOT SET'}")
+                print("=" * 80)
+                print("🔄 BACKGROUND THREAD STARTED")
+                print(f"   Attempting to send email to: {data['to']}")
+                print(f"   Using Gmail account: {GMAIL_USER}")
+                print(f"   Gmail password is: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET - THIS IS THE PROBLEM!'}")
+                print("=" * 80)
+                
+                if not GMAIL_USER or not GMAIL_PASS:
+                    print("❌ ERROR: Gmail credentials are NOT configured!")
+                    print("❌ Please set GMAIL_USER and GMAIL_PASS in Render environment variables")
+                    return
                 
                 success = send_email(
                     to_email=data['to'],
@@ -401,20 +414,24 @@ def send_reply_email():
                     message_body=data['message']
                 )
                 
+                print("=" * 80)
                 if success:
-                    print(f"✅ Background thread: Email sent successfully to {data['to']}")
-                    print(f"✅ Check recipient's inbox (and spam folder) for the email")
+                    print(f"✅ SUCCESS: Email sent successfully to {data['to']}")
+                    print(f"✅ The recipient should check their inbox AND spam folder")
                 else:
-                    print(f"❌ Background thread: Failed to send email to {data['to']}")
-                    print(f"❌ Check logs above for the specific error message")
-                    print(f"❌ Common issues:")
-                    print(f"   1. Gmail credentials not configured in Render")
-                    print(f"   2. Gmail App Password is incorrect")
-                    print(f"   3. 2-Step Verification not enabled on Gmail account")
+                    print(f"❌ FAILED: Could not send email to {data['to']}")
+                    print(f"❌ Check the error messages above for details")
+                    print(f"❌ Most common issues:")
+                    print(f"   1. Gmail App Password is incorrect")
+                    print(f"   2. 2-Step Verification not enabled")
+                    print(f"   3. Gmail account is locked or restricted")
+                print("=" * 80)
             except Exception as e:
-                print(f"❌ Background thread: Exception sending email: {e}")
+                print("=" * 80)
+                print(f"❌ EXCEPTION in background thread: {e}")
                 import traceback
-                print(f"Background thread traceback: {traceback.format_exc()}")
+                print(f"Traceback:\n{traceback.format_exc()}")
+                print("=" * 80)
         
         # Start email sending in background (don't wait for it)
         thread = threading.Thread(target=send_email_background)
@@ -422,10 +439,10 @@ def send_reply_email():
         thread.start()
         
         # Return immediately - email will send in background
-        print("Returning success response immediately, email sending in background")
+        print("✅ Returning success response immediately, email sending in background thread")
         return jsonify({
             'success': True,
-            'message': 'Email is being sent. You will receive a confirmation once it\'s delivered.'
+            'message': 'Email is being sent. Check Render logs to verify delivery.'
         }), 200
             
     except Exception as e:

@@ -10,7 +10,7 @@ This comprehensive guide will walk you through deploying your SHAPE portfolio we
 2. [GitHub Setup](#1-put-the-project-on-github)
 3. [Backend Deployment (Render)](#2-deploy-the-flask-backend-api-to-render)
 4. [Update Frontend API URLs](#3-point-the-frontend-to-the-deployed-api)
-5. [Frontend Deployment (Netlify)](#4-deploy-the-static-frontend-to-netlify)
+5. [Frontend Deployment (Vercel)](#4-deploy-the-static-frontend-to-vercel)
 6. [Verification & Testing](#5-verify-the-full-system)
 7. [Troubleshooting](#6-troubleshooting)
 8. [Custom Domain (Optional)](#7-optional--custom-domain)
@@ -81,7 +81,14 @@ You'll need accounts on three platforms:
    - Authorize Render to access your GitHub account
    - Complete the signup
 
-3. **Netlify** (for hosting the frontend):
+3. **Vercel** (for hosting the frontend - recommended):
+   - Go to: `https://vercel.com`
+   - Click "Sign up"
+   - Click "Continue with GitHub"
+   - Authorize Vercel to access your GitHub account
+   - Complete the signup
+   
+   **Alternative: Netlify** (if you prefer):
    - Go to: `https://netlify.com`
    - Click "Sign up"
    - Click "Sign up with GitHub"
