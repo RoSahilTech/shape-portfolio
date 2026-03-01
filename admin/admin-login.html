@@ -215,13 +215,22 @@
                 })
             })
             .then(response => {
+                console.log('Login response status:', response.status);
                 // Check if response is ok
                 if (!response.ok) {
                     return response.json().then(data => {
-                        throw new Error(data.error || 'Login failed');
-                    }).catch(() => {
+                        console.error('Login error response:', data);
+                        const errorMsg = data.error || `Login failed with status ${response.status}`;
+                        if (response.status === 401) {
+                            throw new Error('Invalid username or password. Please check your credentials.');
+                        }
+                        throw new Error(errorMsg);
+                    }).catch((err) => {
                         // If JSON parsing fails, throw a generic error
-                        throw new Error(`Login failed with status ${response.status}`);
+                        if (err.message) {
+                            throw err;
+                        }
+                        throw new Error(`Login failed with status ${response.status}. Please check if the backend server is running.`);
                     });
                 }
                 return response.json().catch(() => {
