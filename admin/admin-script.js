@@ -255,7 +255,7 @@ document.getElementById('replyForm').addEventListener('submit', function(e) {
                     closeModal();
                     
                     // Show success message
-                    showSuccessMessage('✓ You replied to the user!');
+                    showSuccessMessage('✓ Email sent! Check Render logs to verify delivery.');
                     
                     // Reload messages to update the checkbox and badge
                     loadMessages();
