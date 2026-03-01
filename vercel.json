@@ -1,43 +1,20 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "*.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/index.html"
+      "source": "/portfolio",
+      "destination": "/portfolio.html"
     },
     {
-      "src": "/portfolio",
-      "dest": "/portfolio.html"
+      "source": "/projects",
+      "destination": "/projects.html"
     },
     {
-      "src": "/projects",
-      "dest": "/projects.html"
+      "source": "/resume",
+      "destination": "/resume.html"
     },
     {
-      "src": "/resume",
-      "dest": "/resume.html"
-    },
-    {
-      "src": "/admin",
-      "dest": "/admin/admin-login.html"
-    },
-    {
-      "src": "/admin/(.*)",
-      "dest": "/admin/$1"
-    },
-    {
-      "src": "/(.*\\.(html|css|js|json|png|jpg|jpeg|gif|svg|ico|mp4|mp3|pdf))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/admin",
+      "destination": "/admin/admin-login.html"
     }
   ],
   "headers": [
