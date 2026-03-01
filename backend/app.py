@@ -10,6 +10,25 @@ import json
 from dotenv import load_dotenv
 import threading
 import socket
+import sys
+import logging
+
+# Configure logging to ensure output appears in Render logs
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
+# Helper function to print and flush immediately
+def log_print(message):
+    """Print message and immediately flush to ensure it appears in Render logs"""
+    print(message)
+    sys.stdout.flush()
+    logger.info(message)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -83,7 +102,7 @@ def save_messages():
         with open(messages_file, 'w') as f:
             json.dump(messages_db, f, indent=2)
     except Exception as e:
-        print(f"Error saving messages: {e}")
+        log_print(f"Error saving messages: {e}")
 
 # Load projects from file
 def load_projects():
@@ -93,7 +112,7 @@ def load_projects():
             with open(projects_file, 'r') as f:
                 projects_db = json.load(f)
     except Exception as e:
-        print(f"Error loading projects: {e}")
+        log_print(f"Error loading projects: {e}")
         projects_db = []
 
 # Save projects to file
@@ -102,7 +121,7 @@ def save_projects():
         with open(projects_file, 'w') as f:
             json.dump(projects_db, f, indent=2)
     except Exception as e:
-        print(f"Error saving projects: {e}")
+        log_print(f"Error saving projects: {e}")
 
 # Load skills from file
 def load_skills():
@@ -123,7 +142,7 @@ def load_skills():
             ]
             save_skills()
     except Exception as e:
-        print(f"Error loading skills: {e}")
+        log_print(f"Error loading skills: {e}")
         skills_db = []
 
 # Save skills to file
@@ -132,7 +151,7 @@ def save_skills():
         with open(skills_file, 'w') as f:
             json.dump(skills_db, f, indent=2)
     except Exception as e:
-        print(f"Error saving skills: {e}")
+        log_print(f"Error saving skills: {e}")
 
 # Load messages on startup
 load_messages()
@@ -163,12 +182,12 @@ def send_email(to_email, subject, message_body):
     try:
         # Check if Gmail credentials are configured
         if not GMAIL_USER or not GMAIL_PASS:
-            print("Error: Gmail credentials not configured")
-            print(f"GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
-            print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
+            log_print("Error: Gmail credentials not configured")
+            log_print(f"GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
+            log_print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
             return False
         
-        print(f"Attempting to send email to {to_email}...")
+        log_print(f"Attempting to send email to {to_email}...")
         
         # Create message
         msg = MIMEMultipart()
@@ -180,44 +199,44 @@ def send_email(to_email, subject, message_body):
         msg.attach(MIMEText(message_body, 'plain'))
         
         # Connect to Gmail SMTP server with shorter timeout
-        print("Connecting to Gmail SMTP server...")
+        log_print("Connecting to Gmail SMTP server...")
         server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)  # 10 second connection timeout
-        print("Starting TLS...")
+        log_print("Starting TLS...")
         server.starttls(timeout=10)  # 10 second TLS timeout
-        print("Logging in...")
+        log_print("Logging in...")
         server.login(GMAIL_USER, GMAIL_PASS)  # This can hang if credentials are wrong
-        print("Sending email...")
+        log_print("Sending email...")
         
         # Send email
         text = msg.as_string()
         server.sendmail(GMAIL_USER, to_email, text)
-        print(f"Email sent successfully to {to_email}")
+        log_print(f"Email sent successfully to {to_email}")
         return True
         
     except smtplib.SMTPAuthenticationError as e:
-        print(f"SMTP Authentication Error: {e}")
-        print("Make sure you're using a Gmail App Password, not your regular password")
+        log_print(f"SMTP Authentication Error: {e}")
+        log_print("Make sure you're using a Gmail App Password, not your regular password")
         return False
     except smtplib.SMTPServerDisconnected as e:
-        print(f"SMTP Server Disconnected: {e}")
-        print("Gmail server disconnected. This might be a temporary issue.")
+        log_print(f"SMTP Server Disconnected: {e}")
+        log_print("Gmail server disconnected. This might be a temporary issue.")
         return False
     except smtplib.SMTPException as e:
-        print(f"SMTP Error: {e}")
+        log_print(f"SMTP Error: {e}")
         return False
     except (TimeoutError, OSError) as e:
-        print(f"Timeout/Connection Error: {e}")
-        print("Connection to Gmail SMTP server timed out or failed")
+        log_print(f"Timeout/Connection Error: {e}")
+        log_print("Connection to Gmail SMTP server timed out or failed")
         return False
     except socket.timeout as e:
-        print(f"Socket Timeout: {e}")
-        print("SMTP connection timed out")
+        log_print(f"Socket Timeout: {e}")
+        log_print("SMTP connection timed out")
         return False
     except Exception as e:
-        print(f"Error sending email: {e}")
-        print(f"Error type: {type(e).__name__}")
+        log_print(f"Error sending email: {e}")
+        log_print(f"Error type: {type(e).__name__}")
         import traceback
-        print(f"Traceback: {traceback.format_exc()}")
+        log_print(f"Traceback: {traceback.format_exc()}")
         return False
     finally:
         # Always close the connection
@@ -279,10 +298,10 @@ def admin_login():
         password = data.get('password')
         
         # Debug logging (remove in production)
-        print(f"Login attempt - Username: {username}")
-        print(f"Expected username: {ADMIN_USERNAME}")
-        print(f"Password match: {password == ADMIN_PASSWORD}")
-        print(f"Username match: {username == ADMIN_USERNAME}")
+        log_print(f"Login attempt - Username: {username}")
+        log_print(f"Expected username: {ADMIN_USERNAME}")
+        log_print(f"Password match: {password == ADMIN_PASSWORD}")
+        log_print(f"Username match: {username == ADMIN_USERNAME}")
         
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session['admin_logged_in'] = True
@@ -299,7 +318,7 @@ def admin_login():
             }), 401
             
     except Exception as e:
-        print(f"Login error: {e}")
+        log_print(f"Login error: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/admin/logout', methods=['POST'])
@@ -376,36 +395,36 @@ def send_reply_email():
         
         # Check if Gmail is configured FIRST (return immediately if not)
         if not GMAIL_USER or not GMAIL_PASS:
-            print("ERROR: Gmail credentials not configured")
-            print(f"GMAIL_USER: {'SET' if GMAIL_USER else 'NOT SET'}")
-            print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
+            log_print("ERROR: Gmail credentials not configured")
+            log_print(f"GMAIL_USER: {'SET' if GMAIL_USER else 'NOT SET'}")
+            log_print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
             return jsonify({
                 'success': False,
                 'error': 'Gmail credentials not configured. Please set GMAIL_USER and GMAIL_PASS environment variables in your Render dashboard.'
             }), 500
         
         # Return immediately and send email in background
-        print("=" * 80)
-        print(f"📧 EMAIL SEND REQUEST RECEIVED")
-        print(f"   To: {data['to']}")
-        print(f"   Subject: {data['subject']}")
-        print(f"   GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
-        print(f"   GMAIL_PASS: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET'}")
-        print("=" * 80)
+        log_print("=" * 80)
+        log_print(f"📧 EMAIL SEND REQUEST RECEIVED")
+        log_print(f"   To: {data['to']}")
+        log_print(f"   Subject: {data['subject']}")
+        log_print(f"   GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
+        log_print(f"   GMAIL_PASS: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET'}")
+        log_print("=" * 80)
         
         def send_email_background():
             """Send email in background thread"""
             try:
-                print("=" * 80)
-                print("🔄 BACKGROUND THREAD STARTED")
-                print(f"   Attempting to send email to: {data['to']}")
-                print(f"   Using Gmail account: {GMAIL_USER}")
-                print(f"   Gmail password is: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET - THIS IS THE PROBLEM!'}")
-                print("=" * 80)
+                log_print("=" * 80)
+                log_print("🔄 BACKGROUND THREAD STARTED")
+                log_print(f"   Attempting to send email to: {data['to']}")
+                log_print(f"   Using Gmail account: {GMAIL_USER}")
+                log_print(f"   Gmail password is: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET - THIS IS THE PROBLEM!'}")
+                log_print("=" * 80)
                 
                 if not GMAIL_USER or not GMAIL_PASS:
-                    print("❌ ERROR: Gmail credentials are NOT configured!")
-                    print("❌ Please set GMAIL_USER and GMAIL_PASS in Render environment variables")
+                    log_print("❌ ERROR: Gmail credentials are NOT configured!")
+                    log_print("❌ Please set GMAIL_USER and GMAIL_PASS in Render environment variables")
                     return
                 
                 success = send_email(
@@ -414,24 +433,24 @@ def send_reply_email():
                     message_body=data['message']
                 )
                 
-                print("=" * 80)
+                log_print("=" * 80)
                 if success:
-                    print(f"✅ SUCCESS: Email sent successfully to {data['to']}")
-                    print(f"✅ The recipient should check their inbox AND spam folder")
+                    log_print(f"✅ SUCCESS: Email sent successfully to {data['to']}")
+                    log_print(f"✅ The recipient should check their inbox AND spam folder")
                 else:
-                    print(f"❌ FAILED: Could not send email to {data['to']}")
-                    print(f"❌ Check the error messages above for details")
-                    print(f"❌ Most common issues:")
-                    print(f"   1. Gmail App Password is incorrect")
-                    print(f"   2. 2-Step Verification not enabled")
-                    print(f"   3. Gmail account is locked or restricted")
-                print("=" * 80)
+                    log_print(f"❌ FAILED: Could not send email to {data['to']}")
+                    log_print(f"❌ Check the error messages above for details")
+                    log_print(f"❌ Most common issues:")
+                    log_print(f"   1. Gmail App Password is incorrect")
+                    log_print(f"   2. 2-Step Verification not enabled")
+                    log_print(f"   3. Gmail account is locked or restricted")
+                log_print("=" * 80)
             except Exception as e:
-                print("=" * 80)
-                print(f"❌ EXCEPTION in background thread: {e}")
+                log_print("=" * 80)
+                log_print(f"❌ EXCEPTION in background thread: {e}")
                 import traceback
-                print(f"Traceback:\n{traceback.format_exc()}")
-                print("=" * 80)
+                log_print(f"Traceback:\n{traceback.format_exc()}")
+                log_print("=" * 80)
         
         # Start email sending in background (don't wait for it)
         thread = threading.Thread(target=send_email_background)
@@ -439,16 +458,16 @@ def send_reply_email():
         thread.start()
         
         # Return immediately - email will send in background
-        print("✅ Returning success response immediately, email sending in background thread")
+        log_print("✅ Returning success response immediately, email sending in background thread")
         return jsonify({
             'success': True,
             'message': 'Email is being sent. Check Render logs to verify delivery.'
         }), 200
             
     except Exception as e:
-        print(f"Error in send_reply_email: {e}")
+        log_print(f"Error in send_reply_email: {e}")
         import traceback
-        print(f"Traceback: {traceback.format_exc()}")
+        log_print(f"Traceback: {traceback.format_exc()}")
         return jsonify({
             'success': False,
             'error': f'Server error: {str(e)}'
@@ -482,17 +501,17 @@ def get_projects():
     status = request.args.get('status', None)  # 'live' or 'draft'
     
     # Debug logging
-    print(f"GET /api/projects - status filter: {status}")
-    print(f"Total projects in DB: {len(projects_db)}")
+    log_print(f"GET /api/projects - status filter: {status}")
+    log_print(f"Total projects in DB: {len(projects_db)}")
     if projects_db:
-        print(f"Project statuses: {[p.get('status', 'N/A') for p in projects_db]}")
-        print(f"Project names: {[p.get('name', 'N/A') for p in projects_db]}")
+        log_print(f"Project statuses: {[p.get('status', 'N/A') for p in projects_db]}")
+        log_print(f"Project names: {[p.get('name', 'N/A') for p in projects_db]}")
     
     if status:
         filtered_projects = [p for p in projects_db if p.get('status', 'draft') == status]
-        print(f"Filtered projects with status '{status}': {len(filtered_projects)}")
+        log_print(f"Filtered projects with status '{status}': {len(filtered_projects)}")
         if filtered_projects:
-            print(f"Filtered project names: {[p.get('name', 'N/A') for p in filtered_projects]}")
+            log_print(f"Filtered project names: {[p.get('name', 'N/A') for p in filtered_projects]}")
         return jsonify({'success': True, 'projects': filtered_projects})
     
     return jsonify({'success': True, 'projects': projects_db})
@@ -622,8 +641,8 @@ def create_project():
     save_projects()
     
     # Debug: Print saved project info
-    print(f"Created project: ID={project['id']}, Name={project['name']}, Status={project['status']}")
-    print(f"Total projects now: {len(projects_db)}")
+    log_print(f"Created project: ID={project['id']}, Name={project['name']}, Status={project['status']}")
+    log_print(f"Total projects now: {len(projects_db)}")
     
     return jsonify({'success': True, 'project': project})
 
@@ -677,8 +696,8 @@ def update_project(project_id):
     save_projects()
     
     # Debug: Print updated project info
-    print(f"Updated project: ID={project['id']}, Name={project['name']}, Status={project['status']}")
-    print(f"Total projects now: {len(projects_db)}")
+    log_print(f"Updated project: ID={project['id']}, Name={project['name']}, Status={project['status']}")
+    log_print(f"Total projects now: {len(projects_db)}")
     
     return jsonify({'success': True, 'project': project})
 
@@ -775,9 +794,9 @@ def delete_skill(skill_id):
     return jsonify({'success': True})
 
 if __name__ == '__main__':
-    print("Starting Flask server...")
-    print(f"Gmail User: {GMAIL_USER}")
-    print("Make sure GMAIL_PASS is set in environment variables!")
+    log_print("Starting Flask server...")
+    log_print(f"Gmail User: {GMAIL_USER}")
+    log_print("Make sure GMAIL_PASS is set in environment variables!")
     # Use PORT from environment if provided (needed on most hosting platforms)
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_DEBUG', '1') == '1'
