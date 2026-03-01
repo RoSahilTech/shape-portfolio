@@ -79,6 +79,7 @@ def handle_preflight():
 GMAIL_USER = os.environ.get('GMAIL_USER', 'sahilkumarsharmaprofessional@gmail.com')
 GMAIL_PASS = os.environ.get('GMAIL_PASS', '')  # Set this in environment variable
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')  # Resend API key (alternative to SMTP)
+RESEND_FROM_EMAIL = os.environ.get('RESEND_FROM_EMAIL', 'onboarding@resend.dev')  # Resend "from" email (default works without verification)
 ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'admin123')  # Change this!
 
@@ -195,14 +196,24 @@ def send_email_via_resend(to_email, subject, message_body):
         
         log_print("Sending email via Resend API...")
         
+        # Use Resend's default domain (works without verification)
+        # Set reply-to to Gmail so replies go to the right address
+        from_email = RESEND_FROM_EMAIL
+        if '@' not in from_email:
+            # If just a name, use default domain
+            from_email = f"{from_email}@resend.dev"
+        
+        log_print(f"From: {from_email} (Reply-To: {GMAIL_USER})")
+        
         url = "https://api.resend.com/emails"
         headers = {
             "Authorization": f"Bearer {RESEND_API_KEY}",
             "Content-Type": "application/json"
         }
         data = {
-            "from": f"Portfolio <{GMAIL_USER}>",
+            "from": f"Portfolio <{from_email}>",
             "to": [to_email],
+            "reply_to": GMAIL_USER,  # Replies will go to your Gmail
             "subject": subject,
             "text": message_body
         }
