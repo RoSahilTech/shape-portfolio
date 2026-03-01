@@ -12,6 +12,7 @@ import threading
 import socket
 import sys
 import logging
+import ssl
 
 # Configure logging to ensure output appears in Render logs
 logging.basicConfig(
@@ -177,17 +178,22 @@ def admin_required(f):
 
 # Email sending function
 def send_email(to_email, subject, message_body):
-    """Send email using Gmail SMTP"""
+    """Send email using Gmail SMTP - tries port 587 first, then 465"""
     server = None
+    
+    # Strip spaces from Gmail password (App Passwords are 16 chars, user might have copied with spaces)
+    gmail_pass_clean = GMAIL_PASS.strip().replace(' ', '') if GMAIL_PASS else ''
+    
     try:
         # Check if Gmail credentials are configured
-        if not GMAIL_USER or not GMAIL_PASS:
+        if not GMAIL_USER or not gmail_pass_clean:
             log_print("Error: Gmail credentials not configured")
             log_print(f"GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
-            log_print(f"GMAIL_PASS: {'SET' if GMAIL_PASS else 'NOT SET'}")
+            log_print(f"GMAIL_PASS: {'SET' if gmail_pass_clean else 'NOT SET'}")
             return False
         
         log_print(f"Attempting to send email to {to_email}...")
+        log_print(f"Gmail password length: {len(gmail_pass_clean)} chars (should be 16)")
         
         # Create message
         msg = MIMEMultipart()
@@ -198,43 +204,78 @@ def send_email(to_email, subject, message_body):
         # Add body
         msg.attach(MIMEText(message_body, 'plain'))
         
-        # Connect to Gmail SMTP server with shorter timeout
-        log_print("Connecting to Gmail SMTP server...")
-        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=10)  # 10 second connection timeout
-        log_print("Starting TLS...")
-        server.starttls(timeout=10)  # 10 second TLS timeout
-        log_print("Logging in...")
-        server.login(GMAIL_USER, GMAIL_PASS)  # This can hang if credentials are wrong
-        log_print("Sending email...")
-        
-        # Send email
-        text = msg.as_string()
-        server.sendmail(GMAIL_USER, to_email, text)
-        log_print(f"Email sent successfully to {to_email}")
-        return True
+        # Try port 587 with STARTTLS first
+        try:
+            log_print("Trying port 587 (STARTTLS)...")
+            server = smtplib.SMTP('smtp.gmail.com', 587, timeout=15)
+            log_print("Connected! Starting TLS...")
+            server.starttls(timeout=15)
+            log_print("TLS started! Logging in...")
+            server.login(GMAIL_USER, gmail_pass_clean)
+            log_print("Logged in! Sending email...")
+            
+            # Send email
+            text = msg.as_string()
+            server.sendmail(GMAIL_USER, to_email, text)
+            log_print(f"✅ Email sent successfully to {to_email} via port 587")
+            return True
+            
+        except (OSError, socket.error, TimeoutError, socket.timeout) as e:
+            log_print(f"Port 587 failed: {e}")
+            if server:
+                try:
+                    server.quit()
+                except:
+                    pass
+                server = None
+            
+            # Try port 465 with SSL as fallback
+            try:
+                log_print("Trying port 465 (SSL) as fallback...")
+                context = ssl.create_default_context()
+                server = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15, context=context)
+                log_print("Connected via SSL! Logging in...")
+                server.login(GMAIL_USER, gmail_pass_clean)
+                log_print("Logged in! Sending email...")
+                
+                # Send email
+                text = msg.as_string()
+                server.sendmail(GMAIL_USER, to_email, text)
+                log_print(f"✅ Email sent successfully to {to_email} via port 465")
+                return True
+                
+            except Exception as e2:
+                log_print(f"Port 465 also failed: {e2}")
+                raise e2  # Re-raise the original error
         
     except smtplib.SMTPAuthenticationError as e:
-        log_print(f"SMTP Authentication Error: {e}")
-        log_print("Make sure you're using a Gmail App Password, not your regular password")
+        log_print(f"❌ SMTP Authentication Error: {e}")
+        log_print("❌ Make sure you're using a Gmail App Password, not your regular password")
+        log_print("❌ Generate a new App Password at: https://myaccount.google.com/apppasswords")
         return False
     except smtplib.SMTPServerDisconnected as e:
-        log_print(f"SMTP Server Disconnected: {e}")
-        log_print("Gmail server disconnected. This might be a temporary issue.")
+        log_print(f"❌ SMTP Server Disconnected: {e}")
+        log_print("❌ Gmail server disconnected. This might be a temporary issue.")
         return False
     except smtplib.SMTPException as e:
-        log_print(f"SMTP Error: {e}")
+        log_print(f"❌ SMTP Error: {e}")
         return False
-    except (TimeoutError, OSError) as e:
-        log_print(f"Timeout/Connection Error: {e}")
-        log_print("Connection to Gmail SMTP server timed out or failed")
+    except (TimeoutError, OSError, socket.error) as e:
+        log_print(f"❌ Network/Connection Error: {e}")
+        log_print("❌ Render might be blocking outbound SMTP connections")
+        log_print("❌ This is common on free tier hosting services")
+        log_print("❌ Solutions:")
+        log_print("   1. Upgrade Render plan (paid plans allow SMTP)")
+        log_print("   2. Use an email API service (SendGrid, Mailgun, Resend)")
+        log_print("   3. Use Gmail API instead of SMTP")
         return False
     except socket.timeout as e:
-        log_print(f"Socket Timeout: {e}")
-        log_print("SMTP connection timed out")
+        log_print(f"❌ Socket Timeout: {e}")
+        log_print("❌ SMTP connection timed out")
         return False
     except Exception as e:
-        log_print(f"Error sending email: {e}")
-        log_print(f"Error type: {type(e).__name__}")
+        log_print(f"❌ Error sending email: {e}")
+        log_print(f"❌ Error type: {type(e).__name__}")
         import traceback
         log_print(f"Traceback: {traceback.format_exc()}")
         return False
@@ -403,13 +444,19 @@ def send_reply_email():
                 'error': 'Gmail credentials not configured. Please set GMAIL_USER and GMAIL_PASS environment variables in your Render dashboard.'
             }), 500
         
+        # Clean password (remove spaces - Gmail App Passwords are 16 chars)
+        gmail_pass_clean = GMAIL_PASS.strip().replace(' ', '') if GMAIL_PASS else ''
+        gmail_pass_length = len(gmail_pass_clean) if gmail_pass_clean else 0
+        
         # Return immediately and send email in background
         log_print("=" * 80)
         log_print(f"📧 EMAIL SEND REQUEST RECEIVED")
         log_print(f"   To: {data['to']}")
         log_print(f"   Subject: {data['subject']}")
         log_print(f"   GMAIL_USER: {GMAIL_USER if GMAIL_USER else 'NOT SET'}")
-        log_print(f"   GMAIL_PASS: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET'}")
+        log_print(f"   GMAIL_PASS: {'SET (' + str(gmail_pass_length) + ' chars)' if gmail_pass_clean else 'NOT SET'}")
+        if gmail_pass_length != 16 and gmail_pass_clean:
+            log_print(f"   ⚠️  WARNING: Password should be 16 chars (Gmail App Password), got {gmail_pass_length}")
         log_print("=" * 80)
         
         def send_email_background():
@@ -419,7 +466,9 @@ def send_reply_email():
                 log_print("🔄 BACKGROUND THREAD STARTED")
                 log_print(f"   Attempting to send email to: {data['to']}")
                 log_print(f"   Using Gmail account: {GMAIL_USER}")
-                log_print(f"   Gmail password is: {'SET (' + str(len(GMAIL_PASS)) + ' chars)' if GMAIL_PASS else 'NOT SET - THIS IS THE PROBLEM!'}")
+                log_print(f"   Gmail password is: {'SET (' + str(gmail_pass_length) + ' chars)' if gmail_pass_clean else 'NOT SET - THIS IS THE PROBLEM!'}")
+                if gmail_pass_length != 16 and gmail_pass_clean:
+                    log_print(f"   ⚠️  WARNING: Password should be 16 chars, got {gmail_pass_length} (spaces removed)")
                 log_print("=" * 80)
                 
                 if not GMAIL_USER or not GMAIL_PASS:
