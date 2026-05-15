@@ -206,11 +206,40 @@
             color: #555;
             font-style: italic;
         }
+
+        .resume-toolbar {
+            max-width: 900px;
+            margin: 0 auto 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .download-resume-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: #29629b;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .download-resume-btn:hover {
+            background: #1e4a75;
+        }
         
         @media print {
             body {
                 background: white;
                 padding: 0;
+            }
+
+            .resume-toolbar {
+                display: none;
             }
             
             .resume-container {
@@ -221,6 +250,15 @@
     </style>
 </head>
 <body>
+    <div class="resume-toolbar">
+        <a
+            href="docs/Sahil%20Resume.pdf"
+            download="Sahil_Kumar_Sharma_Resume.pdf"
+            class="download-resume-btn"
+        >
+            Download Resume (PDF)
+        </a>
+    </div>
     <div class="resume-container">
         <div class="header">
             <h1>SAHIL KUMAR SHARMA</h1>
